@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -299,8 +300,12 @@ public class ClaseGUI {
 	}
 	
 	public void leerTexto() throws IOException{
-		String path = "/home/tkhacker/workspace/Deber/psudoBD/Provincias.cvs";
+		//String path1 = "/home/tkhacker/workspace/Deber/psudoBD/Provincias.cvs";
 				
+			File directory = new File("psudoBD/Provincias.cvs");
+			System.out.println(directory.getAbsolutePath());
+			String path = directory.getAbsolutePath().toString();
+			
 			FileReader fr = new FileReader(path);
 			
 			BufferedReader texto = new BufferedReader(fr);

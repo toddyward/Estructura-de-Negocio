@@ -300,7 +300,6 @@ public class ClaseGUI {
 	}
 	
 	public void leerTexto() throws IOException{
-		//String path1 = "/home/tkhacker/workspace/Deber/psudoBD/Provincias.cvs";
 				
 			File directory = new File("psudoBD/Provincias.cvs");
 			System.out.println(directory.getAbsolutePath());

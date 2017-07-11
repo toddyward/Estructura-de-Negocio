@@ -4,15 +4,15 @@ import java.sql.*;
 
 public class ConexionMySql {
 
-	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-	static String DB_URL = "jdbc:mysql://";
-	static String servidor = "localhost/";
-	static String baseDeDatos = "ventas2017a"; 
+	final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+	String DB_URL = "jdbc:mysql://";
+	String servidor = "localhost/";
+	String baseDeDatos = "ventas2017a"; 
 	
-	static final String USER = "root";
-	static final String PASSWORD = "";
+	final String USER = "root";
+	final String PASSWORD = "";
 	
-	public static void main(String args[]){
+	public void conexion(String args[]){
 		
 		DB_URL += servidor + baseDeDatos; 
 		

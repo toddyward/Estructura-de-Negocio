@@ -17,7 +17,7 @@ public class ClaseGUI {
 	private JFrame mainFrame;
 	
 	private JPanel panel1;
-	private JPanel panelID;
+	//private JPanel panelID;
 	
 	private JLabel idCliente;
 	private JLabel idLugarGeo;
@@ -29,6 +29,10 @@ public class ClaseGUI {
 	private JLabel correoCli;
 	private JLabel direccionCli;
 	private JLabel telefonoCli;
+	private JLabel provincias;
+	private JLabel cantones;
+	private JLabel parroquias;
+	private JLabel lugarResidencia;
 	
 	private JTextField idClienteTxt;
 	private JTextField idLugarGeoTxt;
@@ -40,10 +44,12 @@ public class ClaseGUI {
 	private JTextField direccionCliTxt;
 	private JTextField telefonoCliTxt;
 	
-	private String[] provincias;
+	private String[] provinciasStr;
 	private String[] tituloTbl = {"Nombre y Apellido", "Cedula/Ruc", "Correo", "Domicillo", "Telefono"};
 	
 	private JComboBox <String> provinciasBox;
+	private JComboBox <String> cantonesBox;
+	private JComboBox <String> parroquiasBox;
 	
 	//private DefaultTableModel model; //Modelar la tabla
 	
@@ -67,15 +73,17 @@ public class ClaseGUI {
 		Insets insetNulo = new Insets(0, 0, 0, 0);
 		
 		mainFrame  = new JFrame();
-		mainFrame.setSize(1200, 800);
+		mainFrame.setSize(800, 400);
 		mainFrame.setLayout(new GridBagLayout());
 		mainFrame.setTitle("Cliente");
 		centrarFrame(mainFrame);
+
 		
-		panelID = new JPanel();
-		panelID.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-		panelID.setLayout(new GridBagLayout());
-		//panelID.setPreferredSize(new Dimension(1200, 40));
+		//panelID = new JPanel();
+		//panelID.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+		//panelID.setLayout(new GridBagLayout());
+		//panelID.setPreferredSize(new Dimension(mainFrame.getWidth(), 40));
+		//panelID.setBounds(0, 0, mainFrame.getWidth(), 40);
 		
 		panel1 = new JPanel();
 		panel1.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
@@ -88,7 +96,7 @@ public class ClaseGUI {
 		constraints.gridy = 0;
 		constraints.anchor = GridBagConstraints.LINE_END;
 		constraints.insets = idInsets;
-		panelID.add(idCliente, constraints);
+		panel1.add(idCliente, constraints);
 		
 		idClienteTxt = new JTextField();
 		idClienteTxt.setEditable(false);
@@ -96,14 +104,14 @@ public class ClaseGUI {
 		constraints.gridx++;
 		constraints.anchor = GridBagConstraints.LINE_START;
 		constraints.insets = insetNulo;
-		panelID.add(idClienteTxt, constraints);
+		panel1.add(idClienteTxt, constraints);
 		
 		idLugarGeo = new JLabel();
 		idLugarGeo.setText("idLugarGeo");
 		constraints.gridx++;
 		constraints.anchor = GridBagConstraints.LINE_END;
 		constraints.insets = idInsets;
-		panelID.add(idLugarGeo, constraints);
+		panel1.add(idLugarGeo, constraints);
 		
 		idLugarGeoTxt = new JTextField();
 		idLugarGeoTxt.setEditable(false);
@@ -111,14 +119,14 @@ public class ClaseGUI {
 		constraints.gridx++;
 		constraints.anchor = GridBagConstraints.LINE_START;
 		constraints.insets = insetNulo;
-		panelID.add(idLugarGeoTxt, constraints);
+		panel1.add(idLugarGeoTxt, constraints);
 		
 		idPersona = new JLabel();
 		idPersona.setText("idPersona");
 		constraints.gridx++;
 		constraints.anchor = GridBagConstraints.LINE_END;
 		constraints.insets = idInsets;
-		panelID.add(idPersona, constraints);
+		panel1.add(idPersona, constraints);
 		
 		idPersonaTxt = new JTextField();
 		idPersonaTxt.setEditable(false);
@@ -126,7 +134,7 @@ public class ClaseGUI {
 		constraints.gridx++;
 		constraints.anchor = GridBagConstraints.LINE_START;
 		constraints.insets = insetNulo;
-		panelID.add(idPersonaTxt, constraints);
+		panel1.add(idPersonaTxt, constraints);
 		
 		Font tituloNegrita = new Font("Arial", Font.BOLD, 16);
 		Font subtituloNegrita = new Font("Arial", Font.BOLD, 14);
@@ -137,7 +145,7 @@ public class ClaseGUI {
 		titulo.setFont(tituloNegrita);
 		titulo.setText("Datos del cliente:");
 		constraints.gridx = 0;
-		constraints.gridy = 0;
+		constraints.gridy++;
 		constraints.anchor = GridBagConstraints.LINE_START;
 		constraints.insets = insetNulo;
 		panel1.add(titulo, constraints);
@@ -222,15 +230,52 @@ public class ClaseGUI {
 		constraints.insets = insetNulo;
 		panel1.add(telefonoCliTxt, constraints);
 		
+		lugarResidencia = new JLabel();
+		lugarResidencia.setText("Lugar de residencia");
+		lugarResidencia.setFont(subtituloNegrita);
+		constraints.gridy++;
+		constraints.insets = new Insets(5, 0, 0, 0);
+		panel1.add(lugarResidencia, constraints);
+		
+		provincias = new JLabel();
+		provincias.setText("Provincia:");
+		constraints.gridy++;
+		constraints.insets = new Insets(5, 0, 0, 0);
+		panel1.add(provincias, constraints);
+		
 		try {
 			leerTexto();
 		} catch (IOException e) {
 		}
 				
-		provinciasBox = new JComboBox<String>(provincias);
+		provinciasBox = new JComboBox<String>(provinciasStr);
 		constraints.gridy++;
-		constraints.insets = new Insets(5, 0, 0, 0);
+		constraints.insets = insetNulo;
 		panel1.add(provinciasBox, constraints);
+		
+		cantones = new JLabel();
+		cantones.setText("Canton:");
+		constraints.gridx++;
+		constraints.gridy--;
+		constraints.insets = new Insets(5, 0, 0, 0);
+		panel1.add(cantones, constraints);
+		
+		cantonesBox = new JComboBox<String>();
+		constraints.gridy++;
+		constraints.insets = insetNulo;
+		panel1.add(cantonesBox,  constraints);
+		
+		parroquias = new JLabel();
+		parroquias.setText("Parroquias:");
+		constraints.gridx++;
+		constraints.gridy--;
+		constraints.insets = new Insets(5, 0, 0, 0);
+		panel1.add(parroquias, constraints);
+		
+		parroquiasBox = new JComboBox<String>();
+		constraints.gridy++;
+		constraints.insets = insetNulo;
+		panel1.add(parroquiasBox, constraints);
 		
 		//model = new DefaultTableModel(tituloTbl, 0); //Paso para empezar a cargar datos desde mysql https://stackoverflow.com/questions/27815400/retrieving-data-from-jdbc-database-into-jtable
 		
@@ -266,7 +311,7 @@ public class ClaseGUI {
 		constraints.weighty = 1;
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.anchor = GridBagConstraints.CENTER;
-		mainFrame.add(panelID, constraints);
+		//mainFrame.add(panelID, constraints);
 		
 		constraints.gridy++;
 		mainFrame.add(panel1, constraints);
@@ -279,8 +324,7 @@ public class ClaseGUI {
 	      public void actionPerformed(ActionEvent e) {
 	         String comando = e.getActionCommand(); 
 	      
-	         
-	      
+
 	      }
 	}
 	
@@ -311,12 +355,12 @@ public class ClaseGUI {
 				
 			int numLineas = 23, i;
 			
-			provincias = new String[numLineas];
+			provinciasStr = new String[numLineas];
 		
 			System.out.println("Provincias:\n");
 			for(i = 0; i < numLineas; i++){
-				provincias[i] = texto.readLine();
-				System.out.println(provincias[i]);
+				provinciasStr[i] = texto.readLine();
+				System.out.println(provinciasStr[i]);
 			}
 			
 			texto.close();

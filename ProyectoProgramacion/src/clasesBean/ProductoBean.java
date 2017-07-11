@@ -8,7 +8,7 @@ public class ProductoBean {
 	private long comprometidoPro;
 	private long saldoPro;
 	private long idProducto;
-	private long idTipoProducto;
+	private long idTipoProducto; //FK
 	
 	private double precioUnitPro;
 	

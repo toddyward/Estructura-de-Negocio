@@ -7,6 +7,7 @@ import java.io.*;
 import java.sql.SQLException;
 
 import javax.swing.*;
+import javax.swing.event.ListDataListener;
 import javax.swing.table.*;
 
 //import com.mysql.jdbc.ResultSet;
@@ -47,14 +48,18 @@ public class ClaseGUI {
 
 	private String[] provinciasStr;
 
+	private String elementoSeleccionadoProvincia;
+	private String elementoSeleccionadoCanton;
+	
 	private JComboBox <String> provinciasBox;
 	private JComboBox <String> cantonesBox;
 	private JComboBox <String> parroquiasBox;
 
 	private DefaultTableModel model; //Modelar la tabla
+	
 	private DefaultComboBoxModel<String> provinciasModel;
-	private DefaultComboBoxModel<String> cantonesModel;
-	private DefaultComboBoxModel<String> parroquiasModel;
+	private DefaultComboBoxModel<String> cantonesModel  = new DefaultComboBoxModel<String>();
+	private DefaultComboBoxModel<String> parroquiasModel = new DefaultComboBoxModel<String>();
 	
 	private JTable tablaDeDatos;
 
@@ -260,7 +265,6 @@ public class ClaseGUI {
 		constraints.insets = new Insets(5, 0, 0, 0);
 		
 		GridBagConstraints constraintsLugGeografico = new GridBagConstraints();
-		
 		provincias = new JLabel();
 		provincias.setText("Provincia:");
 		constraintsLugGeografico.gridx = 0;
@@ -277,9 +281,21 @@ public class ClaseGUI {
 		}*/
 		
 		provinciasModel = new DefaultComboBoxModel<String>();
+		//provinciasModel.addListDataListener(new ListDataListener());
 		consultaInicioProvincias(provinciasModel);
 		
 		provinciasBox = new JComboBox<String>(/*provinciasStr*/provinciasModel);
+		provinciasBox.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				
+				elementoSeleccionadoProvincia = (String) provinciasBox.getSelectedItem();
+				consultaInicioCantones(cantonesModel);
+				cantonesBox.setModel(cantonesModel);
+				System.out.println(elementoSeleccionadoProvincia);
+				
+			}
+		});
 		constraintsLugGeografico.gridy++;
 		constraintsLugGeografico.insets = insetNulo;
 		panelLugarGeografico.add(provinciasBox, constraintsLugGeografico);
@@ -291,7 +307,19 @@ public class ClaseGUI {
 		constraintsLugGeografico.insets = new Insets(5, 0, 0, 0);
 		panelLugarGeografico.add(cantones, constraintsLugGeografico);
 
-		cantonesBox = new JComboBox<String>();
+		cantonesBox = new JComboBox<String>(cantonesModel);
+		cantonesBox.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				
+				elementoSeleccionadoCanton = (String) cantonesBox.getSelectedItem();
+				//consultaInicioCantones(cantonesModel);
+				consultaInicioParroquias(parroquiasModel);
+				parroquiasBox.setModel(parroquiasModel);
+				System.out.println(elementoSeleccionadoCanton);
+				
+			}
+		});
 		constraintsLugGeografico.gridy++;
 		constraintsLugGeografico.insets = insetNulo;
 		panelLugarGeografico.add(cantonesBox,  constraintsLugGeografico);
@@ -495,6 +523,7 @@ public class ClaseGUI {
 					
 					String descripcionLugGeoQry = result.getString("descripcionLugGeo");
 					provinciasModel.addElement(descripcionLugGeoQry);
+				
 				}
 				
 			}
@@ -502,6 +531,112 @@ public class ClaseGUI {
 		}catch(SQLException error) {
 			
 			System.out.println(error);
+			
+		}
+		
+	}
+	
+	public void consultaInicioCantones(DefaultComboBoxModel<String> cantonesModel) {
+		
+		String query = "SELECT * FROM lugar_geo ORDER BY descripcionLugGeo";
+		String queryProvincias = "SELECT lugar_geo.codigoLugGeo FROM lugar_geo WHERE lugar_geo.descripcionLugGeo='" + elementoSeleccionadoProvincia + "'";
+		String codigoLugGeoQry, codigoLugGeoQryProvincias = "";
+		java.sql.ResultSet result = cnxCliente.consulta(query);
+		java.sql.ResultSet resultProvincias = cnxCliente.consulta(queryProvincias);
+		
+		cantonesModel.removeAllElements();
+		
+		try {
+			
+			while(resultProvincias.next()) {
+				
+				codigoLugGeoQryProvincias = resultProvincias.getString("codigoLugGeo");
+				
+				
+			}
+			
+		}catch(SQLException error) {
+			
+			System.out.println(error);
+			
+		}
+		
+		System.out.println("Consulta provincial: " + codigoLugGeoQryProvincias);
+		
+		try {
+			
+			while(result.next()) {
+				
+				codigoLugGeoQry = result.getString("codigoLugGeo");
+				
+				System.out.println("Consulta cantonal: " + codigoLugGeoQry);
+				if(codigoLugGeoQry.substring(0, 2).equals(codigoLugGeoQryProvincias ) && codigoLugGeoQry.length() == 4) { //Falta realizarr esto 
+					
+					String descripcionLugGeoQry = result.getString("descripcionLugGeo");
+					cantonesModel.addElement(descripcionLugGeoQry);
+					
+				}
+				
+			}
+			
+		}catch(SQLException error) {
+			
+			System.out.println(error);
+			
+			
+		}
+		
+	}
+	
+public void consultaInicioParroquias(DefaultComboBoxModel<String> parroquiasModel) {
+		
+		String query = "SELECT * FROM lugar_geo ORDER BY descripcionLugGeo";
+		String queryCantones = "SELECT lugar_geo.codigoLugGeo FROM lugar_geo WHERE lugar_geo.descripcionLugGeo='" + elementoSeleccionadoCanton + "'";
+		String codigoLugGeoQry, codigoLugGeoQryCantones = "";
+		java.sql.ResultSet result = cnxCliente.consulta(query);
+		java.sql.ResultSet resultCantones = cnxCliente.consulta(queryCantones);
+		
+		parroquiasModel.removeAllElements();
+		
+		try {
+			
+			while(resultCantones.next()) {
+				
+				codigoLugGeoQryCantones = resultCantones.getString("codigoLugGeo");
+				
+				
+			}
+			
+		}catch(SQLException error) {
+			
+			System.out.println(error);
+			
+		}
+		
+		System.out.println("Consulta cantonal: (codigoLugGeoQryCantones)" + codigoLugGeoQryCantones);
+		
+		try {
+			
+			while(result.next()) {
+				
+				codigoLugGeoQry = result.getString("codigoLugGeo");
+				
+				System.out.println("Consulta cantonal: " + codigoLugGeoQry);
+				if(codigoLugGeoQry.length() != 2)
+				if(codigoLugGeoQry.substring(0, 4).equals(codigoLugGeoQryCantones ) && codigoLugGeoQry.length() == 8) { 
+					
+					String descripcionLugGeoQry = result.getString("descripcionLugGeo");
+					parroquiasModel.addElement(descripcionLugGeoQry);
+					
+				}
+				
+			}
+			
+		}catch(SQLException error) {
+			
+			System.out.println(error);
+			
+			
 		}
 		
 	}

@@ -1,15 +1,16 @@
 package clasesGUI;
 
+import mysql.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.awt.event.*;
+import java.io.*;
+import java.sql.SQLException;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.*;
+
+import com.mysql.jdbc.ResultSet;
+
 
 
 public class ClaseGUI {
@@ -51,13 +52,16 @@ public class ClaseGUI {
 	private JComboBox <String> cantonesBox;
 	private JComboBox <String> parroquiasBox;
 	
-	//private DefaultTableModel model; //Modelar la tabla
+	private DefaultTableModel model; //Modelar la tabla
 	
 	private JTable tablaDeDatos;
 
-	private JButton aceptar;
+	private JButton agregar;
 	private JButton cancelar;
 	private JButton salir;
+	
+	private JScrollPane scrollTabla;
+	private ConexionMySql cnxCliente;
 	
 	public ClaseGUI(){
 		
@@ -73,8 +77,8 @@ public class ClaseGUI {
 		Insets insetNulo = new Insets(0, 0, 0, 0);
 		
 		mainFrame  = new JFrame();
-		mainFrame.setSize(800, 400);
-		mainFrame.setLayout(new GridBagLayout());
+		mainFrame.setSize(1200, 800);
+		mainFrame.setLayout(new GridLayout());
 		mainFrame.setTitle("Cliente");
 		centrarFrame(mainFrame);
 
@@ -139,7 +143,7 @@ public class ClaseGUI {
 		Font tituloNegrita = new Font("Arial", Font.BOLD, 16);
 		Font subtituloNegrita = new Font("Arial", Font.BOLD, 14);
 		Dimension txtNomDimension = new Dimension(200, 20); //Dimension para la caja de texto nombres, apellidos
-		Dimension txtDimension = new Dimension(200 * 2, 20); //Dimension para las demas cajas de texto
+		Dimension txtDimension = new Dimension(410, 20); //Dimension para las demas cajas de texto
 		
 		titulo = new JLabel();
 		titulo.setFont(tituloNegrita);
@@ -277,18 +281,62 @@ public class ClaseGUI {
 		constraints.insets = insetNulo;
 		panel1.add(parroquiasBox, constraints);
 		
-		//model = new DefaultTableModel(tituloTbl, 0); //Paso para empezar a cargar datos desde mysql https://stackoverflow.com/questions/27815400/retrieving-data-from-jdbc-database-into-jtable
+		model = new DefaultTableModel(); //Paso para empezar a cargar datos desde mysql https://stackoverflow.com/questions/27815400/retrieving-data-from-jdbc-database-into-jtable
+		model.addColumn("idCliente");
+		model.addColumn("idPersona");
+		model.addColumn("idLugarGeo");
+		model.addColumn("Nombre");
+		model.addColumn("Cedula/Ruc");
+		model.addColumn("Correo");
+		model.addColumn("Direccion");
+		model.addColumn("Telefono");
 		
-		//tablaDeDatos = new JTable(tituloTbl);
-		//constraints.gridy++;
-		//panel1.add(tablaDeDatos, constraints);
+		cnxCliente = new ConexionMySql();
 		
-		aceptar = new JButton();
-		aceptar.setText("Aceptar");
-		aceptar.addActionListener(new ButtonClickListener());
-		aceptar.setActionCommand("Aceptar");
+			String query = "SELECT cliente.idCliente, cliente.idPersona, cliente.idLugarGeo, persona.nombrePer, persona.cedulaRUCPer, cliente.correoCli, cliente.direccionCli, cliente.telefonoCli FROM cliente, persona, lugar_geo WHERE cliente.idPersona=persona.idPersona AND cliente.idLugarGeo=lugar_geo.idLugarGeo ORDER BY persona.nombrePer";
+			java.sql.ResultSet result = cnxCliente.consulta(query);
+		
+		try {
+			
+			while(result.next()) {
+				
+				int idClienteQry = result.getInt("idCliente");
+				int idPersonaQry = result.getInt("idPersona");
+				int idLugarGeoQry = result.getInt("idLugarGeo");
+				String nombrePerQry = result.getString("nombrePer");
+				String cedulaRUCPerQry = result.getString("cedulaRUCPer");
+				String correoCliQry = result.getString("correoCli");
+				String direccionCliQry = result.getString("direccionCli");
+				String telefonoCliQry = result.getString("telefonoCli");
+				model.addRow(new Object[] {idClienteQry, idPersonaQry, idLugarGeoQry, nombrePerQry, cedulaRUCPerQry, correoCliQry, direccionCliQry, telefonoCliQry});
+				
+			}
+			
+		}catch(SQLException error){
+			
+			System.out.println(error);
+			
+		}
+		
+		tablaDeDatos = new JTable(model);
+		//tablaDeDatos.setAutoCreateColumnsFromModel(true);
+		//tablaDeDatos.setHoriz
+		//tablaDeDatos.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+		//tablaDeDatos.setEnabled(false);
+		//tablaDeDatos.setPreferredSize(new Dimension(400, 50));
+		constraints.gridx = 0;
 		constraints.gridy++;
-		panel1.add(aceptar, constraints);
+		constraints.insets = new Insets(30, 0, 10, 0);
+		scrollTabla = new JScrollPane(tablaDeDatos);
+		scrollTabla.setPreferredSize(new Dimension(800, 100));
+		panel1.add(scrollTabla, constraints);
+		
+		agregar = new JButton();
+		agregar.setText("Agregar");
+		agregar.addActionListener(new ButtonClickListener());
+		agregar.setActionCommand("Agregar");
+		constraints.gridy++;
+		panel1.add(agregar, constraints);
 		
 		cancelar = new JButton();
 		cancelar.setText("Cancelar");
@@ -305,12 +353,12 @@ public class ClaseGUI {
 		constraints.gridx++;
 		panel1.add(salir, constraints);
 				
-		constraints.gridx = 0;
-		constraints.gridy = 0;
-		constraints.weightx = 1;
-		constraints.weighty = 1;
-		constraints.fill = GridBagConstraints.BOTH;
-		constraints.anchor = GridBagConstraints.CENTER;
+		//constraints.gridx = 0;
+		//constraints.gridy = 0;
+		//constraints.weightx = 1;
+		//constraints.weighty = 1;
+		//constraints.fill = GridBagConstraints.BOTH;
+		//constraints.anchor = GridBagConstraints.CENTER;
 		//mainFrame.add(panelID, constraints);
 		
 		constraints.gridy++;
@@ -323,8 +371,24 @@ public class ClaseGUI {
 	private class ButtonClickListener implements ActionListener{
 	      public void actionPerformed(ActionEvent e) {
 	         String comando = e.getActionCommand(); 
-	      
-
+	         
+	         if(comando.equals("Agregar")) {
+	        	 
+	        	 String insertarPersona, insertarLugar_geo;
+	        	 String nombreApellidoStr, cedulaRucPerStr, correoCliStr, direccionCliStr, telefonoCliStr;
+	        	 
+	        	 nombreApellidoStr = nombreSubPerTxt.getText() + " " +apellidoSubPerTxt.getText();
+	        	 cedulaRucPerStr = cedulaRucPerTxt.getText();
+	        	 correoCliStr = correoCliTxt.getText();
+	        	 direccionCliStr = direccionCliTxt.getText();
+	        	 telefonoCliStr = telefonoCliTxt.getText();
+	        	 
+	        	 insertarPersona = "INSERT INTO PERSONA (nombrePer, cedulaRUCPer) VALUES (" + "'" +nombreApellidoStr + "'" + "," + "'" +cedulaRucPerStr + "'" + ")";
+	        	 System.out.println(insertarPersona);
+	        	 
+	        	// insertarLugar_geo = "INSERT INTO lugar_geo ("
+	         }
+	         
 	      }
 	}
 	

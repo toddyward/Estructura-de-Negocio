@@ -9,9 +9,7 @@ import java.sql.SQLException;
 import javax.swing.*;
 import javax.swing.table.*;
 
-import com.mysql.jdbc.ResultSet;
-
-
+//import com.mysql.jdbc.ResultSet;
 
 public class ClaseGUI {
 
@@ -20,6 +18,7 @@ public class ClaseGUI {
 	private JPanel panel1;
 	private JPanel panelID;
 	private JPanel panelLugarGeografico;
+	private JPanel panelBotones;
 
 	private JLabel idCliente;
 	private JLabel idLugarGeo;
@@ -47,14 +46,16 @@ public class ClaseGUI {
 	private JTextField telefonoCliTxt;
 
 	private String[] provinciasStr;
-	private String[] tituloTbl = {"Nombre y Apellido", "Cedula/Ruc", "Correo", "Domicillo", "Telefono"};
 
 	private JComboBox <String> provinciasBox;
 	private JComboBox <String> cantonesBox;
 	private JComboBox <String> parroquiasBox;
 
 	private DefaultTableModel model; //Modelar la tabla
-
+	private DefaultComboBoxModel<String> provinciasModel;
+	private DefaultComboBoxModel<String> cantonesModel;
+	private DefaultComboBoxModel<String> parroquiasModel;
+	
 	private JTable tablaDeDatos;
 
 	private JButton agregar;
@@ -258,7 +259,6 @@ public class ClaseGUI {
 		constraints.gridy++;
 		constraints.insets = new Insets(5, 0, 0, 0);
 		
-		
 		GridBagConstraints constraintsLugGeografico = new GridBagConstraints();
 		
 		provincias = new JLabel();
@@ -268,15 +268,18 @@ public class ClaseGUI {
 		//constraints.insets = new Insets(5, 0, 0, 0);
 		panelLugarGeografico.add(provincias, constraintsLugGeografico);
 
-		try {
+		/*try {
 		
 			leerTexto();
 		
 		} catch (IOException e) {
 
-		}
+		}*/
 		
-		provinciasBox = new JComboBox<String>(provinciasStr);
+		provinciasModel = new DefaultComboBoxModel<String>();
+		consultaInicioProvincias(provinciasModel);
+		
+		provinciasBox = new JComboBox<String>(/*provinciasStr*/provinciasModel);
 		constraintsLugGeografico.gridy++;
 		constraintsLugGeografico.insets = insetNulo;
 		panelLugarGeografico.add(provinciasBox, constraintsLugGeografico);
@@ -321,24 +324,21 @@ public class ClaseGUI {
 		consultaInicio(model); //Modela la tabla con los datos actuales de la base de datos mysql
 
 		tablaDeDatos = new JTable(model);
-		//tablaDeDatos.setAutoCreateColumnsFromModel(true);
-		//tablaDeDatos.setHoriz
-		//tablaDeDatos.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-		//tablaDeDatos.setEnabled(false);
-		//tablaDeDatos.setPreferredSize(new Dimension(400, 50));
+		tablaDeDatos.setDefaultEditor(Object.class, null);
 		constraints.gridx = 0;
 		constraints.gridy++;
 		constraints.insets = new Insets(30, 0, 10, 0);
 		scrollTabla = new JScrollPane(tablaDeDatos);
 		scrollTabla.setPreferredSize(new Dimension(1000, 100));
 		panel1.add(scrollTabla, constraints);
-
+		
 		agregar = new JButton();
 		agregar.setText("Agregar");
 		agregar.addActionListener(new ButtonClickListener());
 		agregar.setActionCommand("Agregar");
 		constraints.gridy++;
 		constraints.anchor = GridBagConstraints.LINE_END;
+		
 		panel1.add(agregar, constraints);
 
 		cancelar = new JButton();
@@ -478,4 +478,32 @@ public class ClaseGUI {
 		}
 		
 	}
+	
+	public void consultaInicioProvincias(DefaultComboBoxModel<String> provinciasModel) {
+		
+		String query = "SELECT * FROM lugar_geo ORDER BY descripcionLugGeo";
+		String codigoLugGeoQry;
+		java.sql.ResultSet result = cnxCliente.consulta(query);
+		
+		try {
+			
+			while(result.next()) {
+				
+				codigoLugGeoQry = result.getString("codigoLugGeo");
+				
+				if(codigoLugGeoQry.length() == 2) {
+					
+					String descripcionLugGeoQry = result.getString("descripcionLugGeo");
+					provinciasModel.addElement(descripcionLugGeoQry);
+				}
+				
+			}
+			
+		}catch(SQLException error) {
+			
+			System.out.println(error);
+		}
+		
+	}
+	
 }

@@ -570,7 +570,7 @@ public class ClaseGUI {
 				codigoLugGeoQry = result.getString("codigoLugGeo");
 				
 				System.out.println("Consulta cantonal: " + codigoLugGeoQry);
-				if(codigoLugGeoQry.substring(0, 2).equals(codigoLugGeoQryProvincias ) && codigoLugGeoQry.length() == 4) { //Falta realizarr esto 
+				if(codigoLugGeoQry.substring(0, 2).equals(codigoLugGeoQryProvincias ) && codigoLugGeoQry.length() == 6) { //Falta realizarr esto 
 					
 					String descripcionLugGeoQry = result.getString("descripcionLugGeo");
 					cantonesModel.addElement(descripcionLugGeoQry);
@@ -623,7 +623,7 @@ public void consultaInicioParroquias(DefaultComboBoxModel<String> parroquiasMode
 				
 				System.out.println("Consulta cantonal: " + codigoLugGeoQry);
 				if(codigoLugGeoQry.length() != 2)
-				if(codigoLugGeoQry.substring(0, 4).equals(codigoLugGeoQryCantones ) && codigoLugGeoQry.length() == 8) { 
+				if(codigoLugGeoQry.substring(0, 6).equals(codigoLugGeoQryCantones ) && codigoLugGeoQry.length() == 8) { 
 					
 					String descripcionLugGeoQry = result.getString("descripcionLugGeo");
 					parroquiasModel.addElement(descripcionLugGeoQry);

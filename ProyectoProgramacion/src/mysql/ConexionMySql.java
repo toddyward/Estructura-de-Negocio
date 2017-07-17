@@ -31,7 +31,7 @@ public class ConexionMySql {
 			System.out.println("Conectando a la base de datos");
 			conexion = DriverManager.getConnection(DB_URL, USER, PASSWORD);
 
-			System.out.println("Creando Statement");
+			System.out.println("Conexion Exitosa");
 
 		}catch(SQLException se){
 
@@ -47,7 +47,6 @@ public class ConexionMySql {
 
 	public ResultSet consulta(String query){
 
-		Statement comando;
 		ResultSet resultado = null;
 		
 		try{

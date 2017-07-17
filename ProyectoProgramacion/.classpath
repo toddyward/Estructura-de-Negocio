@@ -2,5 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="/home/tkhacker/git/Estructura-de-Negocio/ProyectoProgramacion/JRE Libraries/mariadb-java-client-2.0.3.jar"/>
+	<classpathentry kind="lib" path="/home/tkhacker/git/Estructura-de-Negocio/ProyectoProgramacion/JRE Libraries/mariadb-java-client-2.0.3-javadoc.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

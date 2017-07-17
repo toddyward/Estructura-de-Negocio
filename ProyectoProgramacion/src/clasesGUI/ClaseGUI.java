@@ -560,11 +560,11 @@ public class ClaseGUI {
 					//Ejecutar INSERTS
 					insertarPersona = "INSERT INTO persona (nombrePer, cedulaRUCPer) VALUES (" + "'" +nombreApellidoStr + "'" + "," + "'" +cedulaRucPerStr + "'" + ")";
 					System.out.println("Comando Insertar Persona: " + insertarPersona);
-					cnxCliente.insertarDatos(insertarPersona);
+					cnxCliente.insertar(insertarPersona);
 
 					insertarCliente = "INSERT INTO cliente (correoCli, direccionCli, telefonoCli, idLugarGeo, idPersona) VALUES (" + "'" + correoCliStr + "'" + "," + "'" + direccionCliStr + "'" + "," + "'" + telefonoCliStr + "'" + "," + idLugarGeoStr + "," +"LAST_INSERT_ID()" + ")";
 					System.out.println("Comando Insertar Cliente: " + insertarCliente);
-					cnxCliente.insertarDatos(insertarCliente);
+					cnxCliente.insertar(insertarCliente);
 					
 					//Remover las alertas
 					nombreLblErr.setText("");

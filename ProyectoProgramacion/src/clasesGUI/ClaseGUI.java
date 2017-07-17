@@ -1,13 +1,13 @@
 package clasesGUI;
 
+import clasesBean.*;
+
 import mysql.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 import java.sql.SQLException;
 
 import javax.swing.*;
-import javax.swing.event.ListDataListener;
 import javax.swing.table.*;
 
 //import com.mysql.jdbc.ResultSet;
@@ -35,6 +35,12 @@ public class ClaseGUI {
 	private JLabel cantones;
 	private JLabel parroquias;
 	private JLabel lugarResidencia;
+	private JLabel nombreLblErr;
+	private JLabel cedulaRucLblErr;
+	private JLabel correoLblErr;
+	private JLabel direccionLblErr;
+	private JLabel telefonoLblErr;
+	private JLabel lugarResidenciaLblErr;
 
 	private JTextField idClienteTxt;
 	private JTextField idLugarGeoTxt;
@@ -46,21 +52,21 @@ public class ClaseGUI {
 	private JTextField direccionCliTxt;
 	private JTextField telefonoCliTxt;
 
-	private String[] provinciasStr;
+
 
 	private String elementoSeleccionadoProvincia;
 	private String elementoSeleccionadoCanton;
-	
+
 	private JComboBox <String> provinciasBox;
 	private JComboBox <String> cantonesBox;
 	private JComboBox <String> parroquiasBox;
 
 	private DefaultTableModel model; //Modelar la tabla
-	
+
 	private DefaultComboBoxModel<String> provinciasModel;
 	private DefaultComboBoxModel<String> cantonesModel  = new DefaultComboBoxModel<String>();
 	private DefaultComboBoxModel<String> parroquiasModel = new DefaultComboBoxModel<String>();
-	
+
 	private JTable tablaDeDatos;
 
 	private JButton agregar;
@@ -69,6 +75,10 @@ public class ClaseGUI {
 
 	private JScrollPane scrollTabla;
 	private ConexionMySql cnxCliente = new ConexionMySql();
+
+	private Cap_PedidoBean objPedidoBean = new Cap_PedidoBean();
+	private ClienteBean objClienteBean = new ClienteBean();
+
 
 	public ClaseGUI(){
 
@@ -79,39 +89,32 @@ public class ClaseGUI {
 	public void GUI(){
 
 		GridBagConstraints constraints = new GridBagConstraints();
-		Dimension dimensionTexto = new Dimension(50, 20);
-		Insets idInsets = new Insets(0, 10, 0, 3);
-		Insets insetNulo = new Insets(0, 0, 0, 0);
+		Dimension dimensionTexto = new Dimension(50, 20);	//Dimension dedicado solamente a los textField's de ID
+		Insets idInsets = new Insets(0, 10, 0, 3);	//Inset dedicado solamente a los id ubicados en la parte superior, dentro de panelID
+		Insets insetNulo = new Insets(0, 0, 0, 0);	//Inset nulo
+		Insets alertas = new Insets(0, -575, 0, 0);	//Dimension para las alertas en rojo al lado derecho
 
 		mainFrame  = new JFrame();
 		mainFrame.setSize(1200, 600);
 		mainFrame.setLayout(new GridLayout());
 		mainFrame.setTitle("Cliente");
+		mainFrame.setMinimumSize(new Dimension(1200, 600));
 		centrarFrame(mainFrame);
-
-
-		
-		//panelID.setPreferredSize(new Dimension(mainFrame.getWidth(), 40));
-		//panelID.setBounds(0, 0, mainFrame.getWidth(), 40);
 
 		panel1 = new JPanel();
 		panel1.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		panel1.setLayout(new GridBagLayout());
-		//panel1.setPreferredSize(new Dimension(1198, 500));
 
 		panelID = new JPanel();
 		panelID.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		panelID.setLayout(new GridBagLayout());
 		constraints.gridx = 0;
 		constraints.gridy = 0;
-		//constraints.weightx = 1;
-		//constraints.fill = GridBagConstraints.HORIZONTAL;
 		constraints.anchor = GridBagConstraints.LINE_START;
 		panel1.add(panelID, constraints);
-		
+
 		idCliente = new JLabel();
 		idCliente.setText("idCliente");
-		//constraints.gridx = 0;
 		constraints.weightx = 0;
 		constraints.fill = 0;
 		constraints.gridy++;
@@ -159,8 +162,9 @@ public class ClaseGUI {
 
 		Font tituloNegrita = new Font("Arial", Font.BOLD, 16);
 		Font subtituloNegrita = new Font("Arial", Font.BOLD, 14);
-		Dimension txtNomDimension = new Dimension(200, 20); //Dimension para la caja de texto nombres, apellidos
-		Dimension txtDimension = new Dimension(410, 20); //Dimension para las demas cajas de texto
+		Dimension txtNomDimension = new Dimension(200, 20);	//Dimension para la caja de texto nombres, apellidos
+		Dimension txtDimension = new Dimension(410, 20);	//Dimension para las demas cajas de texto (Correo, direccion ...)
+		Dimension comboBoxDimension = new Dimension(200, 25);	//Dimension standar para los 3 ComboBox
 
 		titulo = new JLabel();
 		titulo.setFont(tituloNegrita);
@@ -198,6 +202,12 @@ public class ClaseGUI {
 		constraints.insets = new Insets(0, -790, 0, 0);
 		panel1.add(apellidoSubPerTxt, constraints);
 
+		nombreLblErr = new JLabel();
+		nombreLblErr.setForeground(Color.RED);
+		nombreLblErr.setFont(subtituloNegrita);
+		constraints.insets = alertas;
+		panel1.add(nombreLblErr, constraints);
+
 		cedulaRucPer = new JLabel();
 		cedulaRucPer.setText("Cedula/Ruc");
 		cedulaRucPer.setFont(subtituloNegrita);
@@ -212,9 +222,17 @@ public class ClaseGUI {
 		constraints.insets = insetNulo;
 		panel1.add(cedulaRucPerTxt, constraints);
 
+		cedulaRucLblErr = new JLabel();
+		cedulaRucLblErr.setForeground(Color.RED);
+		cedulaRucLblErr.setFont(subtituloNegrita);
+		constraints.gridx++;
+		constraints.insets = alertas;
+		panel1.add(cedulaRucLblErr, constraints);
+
 		correoCli = new JLabel();
 		correoCli.setText("Correo Electronico");
 		correoCli.setFont(subtituloNegrita);
+		constraints.gridx = 0;
 		constraints.gridy++;
 		constraints.insets = new Insets(5, 0, 0, 0);
 		panel1.add(correoCli, constraints);
@@ -225,9 +243,17 @@ public class ClaseGUI {
 		constraints.insets = insetNulo;
 		panel1.add(correoCliTxt, constraints);
 
+		correoLblErr = new JLabel();
+		correoLblErr.setForeground(Color.RED);
+		correoLblErr.setFont(subtituloNegrita);
+		constraints.gridx++;
+		constraints.insets = alertas;
+		panel1.add(correoLblErr, constraints);
+
 		direccionCli = new JLabel();
 		direccionCli.setText("Domicillo");
 		direccionCli.setFont(subtituloNegrita);
+		constraints.gridx = 0;
 		constraints.gridy++;
 		constraints.insets = new Insets(5, 0, 0, 0);
 		panel1.add(direccionCli, constraints);
@@ -235,12 +261,21 @@ public class ClaseGUI {
 		direccionCliTxt = new JTextField();
 		direccionCliTxt.setPreferredSize(txtDimension);
 		constraints.gridy++;
+		
 		constraints.insets = insetNulo;
 		panel1.add(direccionCliTxt, constraints);
+
+		direccionLblErr = new JLabel();
+		direccionLblErr.setForeground(Color.RED);
+		direccionLblErr.setFont(subtituloNegrita);
+		constraints.gridx++;
+		constraints.insets = alertas;
+		panel1.add(direccionLblErr, constraints);
 
 		telefonoCli = new JLabel();
 		telefonoCli.setText("Telefono");
 		telefonoCli.setFont(subtituloNegrita);
+		constraints.gridx = 0;
 		constraints.gridy++;
 		constraints.insets = new Insets(5, 0, 0, 0);
 		panel1.add(telefonoCli, constraints);
@@ -251,9 +286,17 @@ public class ClaseGUI {
 		constraints.insets = insetNulo;
 		panel1.add(telefonoCliTxt, constraints);
 
+		telefonoLblErr = new JLabel();
+		telefonoLblErr.setForeground(Color.RED);
+		telefonoLblErr.setFont(subtituloNegrita);
+		constraints.gridx++;
+		constraints.insets = alertas;
+		panel1.add(telefonoLblErr, constraints);
+
 		lugarResidencia = new JLabel();
 		lugarResidencia.setText("Lugar de residencia");
 		lugarResidencia.setFont(subtituloNegrita);
+		constraints.gridx = 0;
 		constraints.gridy++;
 		constraints.insets = new Insets(5, 0, 0, 0);
 		panel1.add(lugarResidencia, constraints);
@@ -263,37 +306,27 @@ public class ClaseGUI {
 		panelLugarGeografico.setLayout(new GridBagLayout());
 		constraints.gridy++;
 		constraints.insets = new Insets(5, 0, 0, 0);
-		
-		GridBagConstraints constraintsLugGeografico = new GridBagConstraints();
+
+		GridBagConstraints constraintsLugGeografico = new GridBagConstraints();	//Constraints para usarlos dentro de panelLugarGeografico
 		provincias = new JLabel();
 		provincias.setText("Provincia:");
 		constraintsLugGeografico.gridx = 0;
 		constraintsLugGeografico.gridy = 0;
-		//constraints.insets = new Insets(5, 0, 0, 0);
 		panelLugarGeografico.add(provincias, constraintsLugGeografico);
 
-		/*try {
-		
-			leerTexto();
-		
-		} catch (IOException e) {
-
-		}*/
-		
 		provinciasModel = new DefaultComboBoxModel<String>();
-		//provinciasModel.addListDataListener(new ListDataListener());
-		consultaInicioProvincias(provinciasModel);
-		
-		provinciasBox = new JComboBox<String>(/*provinciasStr*/provinciasModel);
+		consultaInicioProvincias(provinciasModel);	//Cargar las provincias de manera predeterminada
+
+		provinciasBox = new JComboBox<String>(provinciasModel);
+		provinciasBox.setPreferredSize(comboBoxDimension);
 		provinciasBox.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				
+
 				elementoSeleccionadoProvincia = (String) provinciasBox.getSelectedItem();
-				consultaInicioCantones(cantonesModel);
-				cantonesBox.setModel(cantonesModel);
-				System.out.println(elementoSeleccionadoProvincia);
-				
+				consultaInicioCantones(cantonesModel);	//Cargar los cantones de manera predeterminada
+				cantonesBox.setModel(cantonesModel);	//Ejecutar el modelaje en el combobox de Cantones
+
 			}
 		});
 		constraintsLugGeografico.gridy++;
@@ -304,20 +337,18 @@ public class ClaseGUI {
 		cantones.setText("Canton:");
 		constraintsLugGeografico.gridx++;
 		constraintsLugGeografico.gridy--;
-		constraintsLugGeografico.insets = new Insets(5, 0, 0, 0);
 		panelLugarGeografico.add(cantones, constraintsLugGeografico);
 
 		cantonesBox = new JComboBox<String>(cantonesModel);
+		cantonesBox.setPreferredSize(comboBoxDimension);
 		cantonesBox.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				
+
 				elementoSeleccionadoCanton = (String) cantonesBox.getSelectedItem();
-				//consultaInicioCantones(cantonesModel);
-				consultaInicioParroquias(parroquiasModel);
-				parroquiasBox.setModel(parroquiasModel);
-				System.out.println(elementoSeleccionadoCanton);
-				
+				consultaInicioParroquias(parroquiasModel);	//Cargar las parroquias de manera predeterminada
+				parroquiasBox.setModel(parroquiasModel);	//Ejecutar el modelaje en el combobox de Parroquias
+
 			}
 		});
 		constraintsLugGeografico.gridy++;
@@ -328,16 +359,23 @@ public class ClaseGUI {
 		parroquias.setText("Parroquias:");
 		constraintsLugGeografico.gridx++;
 		constraintsLugGeografico.gridy--;
-		constraintsLugGeografico.insets = new Insets(5, 0, 0, 0);
 		panelLugarGeografico.add(parroquias, constraintsLugGeografico);
 
 		parroquiasBox = new JComboBox<String>();
+		parroquiasBox.setPreferredSize(comboBoxDimension);
 		constraintsLugGeografico.gridy++;
 		constraintsLugGeografico.insets = insetNulo;
 		panelLugarGeografico.add(parroquiasBox, constraintsLugGeografico);
 
 		panel1.add(panelLugarGeografico, constraints);
-		
+
+		lugarResidenciaLblErr = new JLabel();
+		lugarResidenciaLblErr.setForeground(Color.RED);
+		lugarResidenciaLblErr.setFont(subtituloNegrita);
+		constraints.gridx++;
+		constraints.insets = new Insets(5, -375, 0, 0);	//Inset para ubicar correctamente el label de alerta (Independiente de los otros)
+		panel1.add(lugarResidenciaLblErr, constraints);
+
 		model = new DefaultTableModel(); //Paso para empezar a cargar datos desde mysql https://stackoverflow.com/questions/27815400/retrieving-data-from-jdbc-database-into-jtable
 
 		model.addColumn("idCliente");
@@ -348,53 +386,51 @@ public class ClaseGUI {
 		model.addColumn("Correo");
 		model.addColumn("Direccion");
 		model.addColumn("Telefono");
-		
+
 		consultaInicio(model); //Modela la tabla con los datos actuales de la base de datos mysql
 
 		tablaDeDatos = new JTable(model);
-		tablaDeDatos.setDefaultEditor(Object.class, null);
+		tablaDeDatos.setDefaultEditor(Object.class, null);	//Se puede seleccionar pero no editar
 		constraints.gridx = 0;
 		constraints.gridy++;
 		constraints.insets = new Insets(30, 0, 10, 0);
 		scrollTabla = new JScrollPane(tablaDeDatos);
 		scrollTabla.setPreferredSize(new Dimension(1000, 100));
 		panel1.add(scrollTabla, constraints);
+
+		panelBotones = new JPanel();
+		panelBotones.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+		constraints.gridy++;
+		constraints.anchor = GridBagConstraints.LINE_END;
+		
+		GridBagConstraints botonesConstraints = new GridBagConstraints();
 		
 		agregar = new JButton();
 		agregar.setText("Agregar");
 		agregar.addActionListener(new ButtonClickListener());
 		agregar.setActionCommand("Agregar");
-		constraints.gridy++;
-		constraints.anchor = GridBagConstraints.LINE_END;
-		
-		panel1.add(agregar, constraints);
+		botonesConstraints.gridx = 0;
+		botonesConstraints.gridy = 0;
+		botonesConstraints.anchor = GridBagConstraints.LINE_END;
+		panelBotones.add(agregar, botonesConstraints);
 
 		cancelar = new JButton();
 		cancelar.setText("Cancelar");
 		cancelar.addActionListener(new ButtonClickListener());
 		cancelar.setActionCommand("Cancelar");
-		constraints.gridx++;
-		constraints.anchor = GridBagConstraints.CENTER;
-		panel1.add(cancelar, constraints);
+		botonesConstraints.gridx++;
+		panelBotones.add(cancelar, botonesConstraints);
 
 		salir = new JButton();
 		salir.setText("Salir");
 		salir.addActionListener(new ButtonClickListener());
 		salir.setActionCommand("Salir");
 		salir.setActionCommand("Salir");
-		constraints.gridx++;
-		constraints.anchor = GridBagConstraints.CENTER;
-		panel1.add(salir, constraints);
-
-		//constraints.gridx = 0;
-		//constraints.gridy = 0;
-		//constraints.weightx = 1;
-		//constraints.weighty = 1;
-		//constraints.fill = GridBagConstraints.BOTH;
-		//constraints.anchor = GridBagConstraints.CENTER;
-		//mainFrame.add(panelID, constraints);
-
-		constraints.gridy++;
+		botonesConstraints.gridx++;
+		panelBotones.add(salir, botonesConstraints);	
+		
+		
+		panel1.add(panelBotones, constraints);
 		mainFrame.add(panel1, constraints);
 
 		mainFrame.setVisible(true);
@@ -404,35 +440,157 @@ public class ClaseGUI {
 	private class ButtonClickListener implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			String comando = e.getActionCommand(); 
+			String alerta1 = "Informacion Requerida";
+			String regexSoloLet = "^[\\p{L} .'-]+$";
+			String regexCorreo = "^([_a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(\\.[a-zA-Z]{1,6}))?$"; //Obtenido de: https://stackoverflow.com/questions/42266148/email-validation-regex-java
+
+
+			Boolean validacion = true;
 
 			if(comando.equals("Agregar")) {
 
 				String insertarPersona, insertarCliente;
-				String nombreApellidoStr, cedulaRucPerStr, correoCliStr, direccionCliStr, telefonoCliStr;
+				String nombreApellidoStr = null, cedulaRucPerStr = null, correoCliStr = null, direccionCliStr = null, telefonoCliStr = null, idLugarGeoStr = null;
 
-				nombreApellidoStr = nombreSubPerTxt.getText() + " " +apellidoSubPerTxt.getText();
-				cedulaRucPerStr = cedulaRucPerTxt.getText();
-				correoCliStr = correoCliTxt.getText();
-				direccionCliStr = direccionCliTxt.getText();
-				telefonoCliStr = telefonoCliTxt.getText();
+				//Validacion de datos
 
-				insertarPersona = "INSERT INTO persona (nombrePer, cedulaRUCPer) VALUES (" + "'" +nombreApellidoStr + "'" + "," + "'" +cedulaRucPerStr + "'" + ")";
-				System.out.println(insertarPersona);
+				if(!(nombreSubPerTxt.getText().equals("") || apellidoSubPerTxt.getText().equals(""))) {
+					
+					nombreLblErr.setText("");
+					if(nombreSubPerTxt.getText().matches(regexSoloLet) && apellidoSubPerTxt.getText().matches(regexSoloLet)) {
+						
+						nombreLblErr.setText("");
+						nombreApellidoStr = nombreSubPerTxt.getText() + " " + apellidoSubPerTxt.getText();
+						
+					}
+					else {
 
-				cnxCliente.insertarDatos(insertarPersona);
+						nombreLblErr.setText("Ingrese un nombre valido");
+						validacion = false;
+
+					}
+
+				}
+				else {
+
+					nombreLblErr.setText(alerta1);
+					validacion = false;
+
+				}
+
+				if(!cedulaRucPerTxt.getText().equals("")) {
+					
+					//Falta validacion de cedula
+					cedulaRucLblErr.setText("");
+					cedulaRucPerStr = cedulaRucPerTxt.getText();
+
+				}
+				else {
+
+					cedulaRucLblErr.setText(alerta1);
+					validacion = false;
+
+				}
+
+				if(!correoCliTxt.getText().equals("")) {
+					
+					correoLblErr.setText("");
+					if(correoCliTxt.getText().matches(regexCorreo)) {
+						
+						correoLblErr.setText("");
+						correoCliStr = correoCliTxt.getText();
+						
+					}
+					else {
+
+						correoLblErr.setText("Ingrese un correo valido");
+						validacion = false;
+
+					}
+
+				}
+				else {
+
+					correoLblErr.setText(alerta1);
+					validacion = false;
+
+				}
+
+				if(!direccionCliTxt.getText().equals("")) {
+					
+					direccionLblErr.setText("");
+					direccionCliStr = direccionCliTxt.getText();
+					
+				}
+				else {
+
+					direccionLblErr.setText(alerta1);
+					validacion = false;
+
+				}
+
+				if(!telefonoCliTxt.getText().equals("")) {
+
+					//Falta validar (Autorizacion: Sheila)
+					telefonoLblErr.setText("");
+					telefonoCliStr = telefonoCliTxt.getText();
+
+				}
+				else {
+
+					telefonoLblErr.setText(alerta1);
+					validacion = false;
+
+				}
+
+				if(!(provinciasBox.getItemCount() == 0 || cantonesBox.getItemCount() == 0 || parroquiasBox.getItemCount() == 0)) {
+					
+					lugarResidenciaLblErr.setText("");
+					idLugarGeoStr = actualLugarGeoSeleccionado((String) cantonesBox.getSelectedItem(), (String) parroquiasBox.getSelectedItem());
 				
-				insertarCliente = "INSERT INTO cliente (correoCli, direccionCli, telefonoCli, idLugarGeo, idPersona) VALUES (" + "'" + correoCliStr + "'" + "," + "'" + direccionCliStr + "'" + "," + "'" + telefonoCliStr + "'" + "," + "1" + "," +"LAST_INSERT_ID()" + ")";
-				System.out.println(insertarCliente);
-				
-				cnxCliente.insertarDatos(insertarCliente);
+				}
+				else {
+					
+					lugarResidenciaLblErr.setText("Seleccione una parroquia");
+					validacion = false;
+				}
+
+				if(validacion == true) {
+
+					//Ejecutar INSERTS
+					insertarPersona = "INSERT INTO persona (nombrePer, cedulaRUCPer) VALUES (" + "'" +nombreApellidoStr + "'" + "," + "'" +cedulaRucPerStr + "'" + ")";
+					System.out.println("Comando Insertar Persona: " + insertarPersona);
+					cnxCliente.insertarDatos(insertarPersona);
+
+					insertarCliente = "INSERT INTO cliente (correoCli, direccionCli, telefonoCli, idLugarGeo, idPersona) VALUES (" + "'" + correoCliStr + "'" + "," + "'" + direccionCliStr + "'" + "," + "'" + telefonoCliStr + "'" + "," + idLugarGeoStr + "," +"LAST_INSERT_ID()" + ")";
+					System.out.println("Comando Insertar Cliente: " + insertarCliente);
+					cnxCliente.insertarDatos(insertarCliente);
+					
+					//Remover las alertas
+					nombreLblErr.setText("");
+					cedulaRucLblErr.setText("");
+					correoLblErr.setText("");
+					direccionLblErr.setText("");
+					telefonoLblErr.setText("");
+					lugarResidenciaLblErr.setText("");
+					
+					//Inicializar los textFields
+					nombreSubPerTxt.setText("");
+					apellidoSubPerTxt.setText("");
+					cedulaRucPerTxt.setText("");
+					correoCliTxt.setText("");
+					direccionCliTxt.setText("");
+					telefonoCliTxt.setText("");
+					
+
+				}
 				
 				//Remover las filas del modelo para volver a actualizarla
 				while(model.getRowCount() > 0)
 					model.removeRow(0);
-				
+
 				consultaInicio(model);
-				
-				
+
 			}
 
 		}
@@ -453,35 +611,14 @@ public class ClaseGUI {
 
 	}
 
-	public void leerTexto() throws IOException{
-
-		File directory = new File("psudoBD/Provincias.cvs");
-		System.out.println(directory.getAbsolutePath());
-		String path = directory.getAbsolutePath().toString();
-
-		FileReader fr = new FileReader(path);
-
-		BufferedReader texto = new BufferedReader(fr);
-
-		int numLineas = 23, i;
-
-		provinciasStr = new String[numLineas];
-
-		System.out.println("Provincias:\n");
-		for(i = 0; i < numLineas; i++){
-			provinciasStr[i] = texto.readLine();
-			System.out.println(provinciasStr[i]);
-		}
-
-		texto.close();
-
-	}
-
 	public void consultaInicio(DefaultTableModel model) {
-		
-		
+
+		//Ejecutar query
 		String query = "SELECT cliente.idCliente, cliente.idPersona, cliente.idLugarGeo, persona.nombrePer, persona.cedulaRUCPer, cliente.correoCli, cliente.direccionCli, cliente.telefonoCli FROM cliente, persona, lugar_geo WHERE cliente.idPersona=persona.idPersona AND cliente.idLugarGeo=lugar_geo.idLugarGeo ORDER BY persona.nombrePer";
+		
 		java.sql.ResultSet result = cnxCliente.consulta(query);
+		
+		System.out.println("Consulta Tabla de datos: " + query + "\n");
 
 		try {
 
@@ -504,131 +641,160 @@ public class ClaseGUI {
 			System.out.println(error);
 
 		}
-		
+
 	}
-	
+
 	public void consultaInicioProvincias(DefaultComboBoxModel<String> provinciasModel) {
-		
+
 		String query = "SELECT * FROM lugar_geo ORDER BY descripcionLugGeo";
 		String codigoLugGeoQry;
+		
 		java.sql.ResultSet result = cnxCliente.consulta(query);
 		
+		System.out.println("Consulta ComboBox Provincias: " + query + "\n");
+
 		try {
-			
+
 			while(result.next()) {
-				
+
 				codigoLugGeoQry = result.getString("codigoLugGeo");
-				
+
 				if(codigoLugGeoQry.length() == 2) {
-					
+
 					String descripcionLugGeoQry = result.getString("descripcionLugGeo");
 					provinciasModel.addElement(descripcionLugGeoQry);
-				
+
 				}
-				
+
 			}
-			
+
 		}catch(SQLException error) {
-			
+
 			System.out.println(error);
-			
+
 		}
-		
+
 	}
-	
+
 	public void consultaInicioCantones(DefaultComboBoxModel<String> cantonesModel) {
-		
+
 		String query = "SELECT * FROM lugar_geo ORDER BY descripcionLugGeo";
 		String queryProvincias = "SELECT lugar_geo.codigoLugGeo FROM lugar_geo WHERE lugar_geo.descripcionLugGeo='" + elementoSeleccionadoProvincia + "'";
-		String codigoLugGeoQry, codigoLugGeoQryProvincias = "";
+		String codigoLugGeoQry, codigoLugGeoQryProvincias = ""; //Necesarias para realizar el siguente query, y modelar la tabla
+		
 		java.sql.ResultSet result = cnxCliente.consulta(query);
 		java.sql.ResultSet resultProvincias = cnxCliente.consulta(queryProvincias);
 		
+		System.out.println("Consulta ComboBox Cantones: " + query);
+		System.out.println("Consulta ComboBox Cantones (Provincia) " + queryProvincias + "\n");
+
 		cantonesModel.removeAllElements();
-		
+
 		try {
-			
+
 			while(resultProvincias.next()) {
-				
+
 				codigoLugGeoQryProvincias = resultProvincias.getString("codigoLugGeo");
-				
-				
+
+
 			}
-			
+
 		}catch(SQLException error) {
-			
+
 			System.out.println(error);
-			
+
 		}
-		
-		System.out.println("Consulta provincial: " + codigoLugGeoQryProvincias);
-		
+
 		try {
-			
+
 			while(result.next()) {
-				
+
 				codigoLugGeoQry = result.getString("codigoLugGeo");
-				
-				System.out.println("Consulta cantonal: " + codigoLugGeoQry);
-				if(codigoLugGeoQry.substring(0, 2).equals(codigoLugGeoQryProvincias ) && codigoLugGeoQry.length() == 6) { //Falta realizarr esto 
-					
+
+				if(codigoLugGeoQry.substring(0, 2).equals(codigoLugGeoQryProvincias ) && codigoLugGeoQry.length() == 6) { //Evitar cargar rovincias, y al mismo tiempo seleccionar las del mismo grupo de provincias
+
 					String descripcionLugGeoQry = result.getString("descripcionLugGeo");
 					cantonesModel.addElement(descripcionLugGeoQry);
-					
+
 				}
-				
+
 			}
-			
+
 		}catch(SQLException error) {
-			
+
 			System.out.println(error);
-			
-			
+
+
 		}
-		
+
 	}
-	
-public void consultaInicioParroquias(DefaultComboBoxModel<String> parroquiasModel) {
-		
+
+	public void consultaInicioParroquias(DefaultComboBoxModel<String> parroquiasModel) {
+
 		String query = "SELECT * FROM lugar_geo ORDER BY descripcionLugGeo";
 		String queryCantones = "SELECT lugar_geo.codigoLugGeo FROM lugar_geo WHERE lugar_geo.descripcionLugGeo='" + elementoSeleccionadoCanton + "'";
 		String codigoLugGeoQry, codigoLugGeoQryCantones = "";
+		
 		java.sql.ResultSet result = cnxCliente.consulta(query);
 		java.sql.ResultSet resultCantones = cnxCliente.consulta(queryCantones);
+
+		System.out.println("Consulta ComboBox Parroquias: " + query);
+		System.out.println("Consulta ComboBox Parroquias (Cantones) " + queryCantones + "\n");
 		
-		parroquiasModel.removeAllElements();
-		
+		parroquiasModel.removeAllElements(); //Remover todos los elementos, en caso de seleccionar otro canton o provincia
+
 		try {
-			
+
 			while(resultCantones.next()) {
-				
+
 				codigoLugGeoQryCantones = resultCantones.getString("codigoLugGeo");
-				
-				
+
 			}
-			
+
 		}catch(SQLException error) {
-			
+
 			System.out.println(error);
-			
+
 		}
+
+		try {
+
+			while(result.next()) {
+
+				codigoLugGeoQry = result.getString("codigoLugGeo");
+
+				if(codigoLugGeoQry.length() != 2)
+					if(codigoLugGeoQry.substring(0, 6).equals(codigoLugGeoQryCantones ) && codigoLugGeoQry.length() == 8) { //Control para cargar solo parroquias del mismo canton
+
+						String descripcionLugGeoQry = result.getString("descripcionLugGeo");
+						parroquiasModel.addElement(descripcionLugGeoQry);
+
+					}
+
+			}
+
+		}catch(SQLException error) {
+
+			System.out.println(error);
+
+		}
+
+	}
+	
+	public String actualLugarGeoSeleccionado(String canton, String parroquia) {
 		
-		System.out.println("Consulta cantonal: (codigoLugGeoQryCantones)" + codigoLugGeoQryCantones);
+		String query = "SELECT a.idLugarGeo FROM lugar_geo a, lugar_geo b WHERE a.descripcionLugGeo='" + parroquia + "' AND b.descripcionLugGeo='" + canton + "' AND a.idLugarGeoPadre=b.idLugarGeo";
+		String idLugarGeo = null;
+		
+		java.sql.ResultSet result = cnxCliente.consulta(query);
+		
+		System.out.println("Consulta Item seleccionado: " + query + "\n");
 		
 		try {
 			
 			while(result.next()) {
 				
-				codigoLugGeoQry = result.getString("codigoLugGeo");
-				
-				System.out.println("Consulta cantonal: " + codigoLugGeoQry);
-				if(codigoLugGeoQry.length() != 2)
-				if(codigoLugGeoQry.substring(0, 6).equals(codigoLugGeoQryCantones ) && codigoLugGeoQry.length() == 8) { 
-					
-					String descripcionLugGeoQry = result.getString("descripcionLugGeo");
-					parroquiasModel.addElement(descripcionLugGeoQry);
-					
-				}
+				idLugarGeo = result.getString("idLugarGeo");
 				
 			}
 			
@@ -636,9 +802,11 @@ public void consultaInicioParroquias(DefaultComboBoxModel<String> parroquiasMode
 			
 			System.out.println(error);
 			
-			
 		}
+				
+		return idLugarGeo;
 		
 	}
-	
+
 }
+

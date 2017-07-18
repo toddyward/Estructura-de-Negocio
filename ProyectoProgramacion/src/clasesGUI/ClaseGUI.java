@@ -450,7 +450,7 @@ public class ClaseGUI {
 			if(comando.equals("Agregar")) {
 
 				String insertarPersona, insertarCliente;
-				String nombreApellidoStr = null, cedulaRucPerStr = null, correoCliStr = null, direccionCliStr = null, telefonoCliStr = null, idLugarGeoStr = null;
+				//String nombreApellidoStr = null, cedulaRucPerStr = null, correoCliStr = null, direccionCliStr = null, telefonoCliStr = null, idLugarGeoStr = null;
 
 				//Validacion de datos
 
@@ -460,7 +460,7 @@ public class ClaseGUI {
 					if(nombreSubPerTxt.getText().matches(regexSoloLet) && apellidoSubPerTxt.getText().matches(regexSoloLet)) {
 						
 						nombreLblErr.setText("");
-						nombreApellidoStr = nombreSubPerTxt.getText() + " " + apellidoSubPerTxt.getText();
+						objClienteBean.setNombrePer(nombreSubPerTxt.getText() + " " + apellidoSubPerTxt.getText());
 						
 					}
 					else {
@@ -482,7 +482,7 @@ public class ClaseGUI {
 					
 					//Falta validacion de cedula
 					cedulaRucLblErr.setText("");
-					cedulaRucPerStr = cedulaRucPerTxt.getText();
+					objClienteBean.setCedulaRucPer(cedulaRucPerTxt.getText());
 
 				}
 				else {
@@ -498,7 +498,7 @@ public class ClaseGUI {
 					if(correoCliTxt.getText().matches(regexCorreo)) {
 						
 						correoLblErr.setText("");
-						correoCliStr = correoCliTxt.getText();
+						objClienteBean.setCorreoElecCli(correoCliTxt.getText());
 						
 					}
 					else {
@@ -519,7 +519,7 @@ public class ClaseGUI {
 				if(!direccionCliTxt.getText().equals("")) {
 					
 					direccionLblErr.setText("");
-					direccionCliStr = direccionCliTxt.getText();
+					objClienteBean.setDireccionCli(direccionCliTxt.getText());
 					
 				}
 				else {
@@ -533,7 +533,7 @@ public class ClaseGUI {
 
 					//Falta validar (Autorizacion: Sheila)
 					telefonoLblErr.setText("");
-					telefonoCliStr = telefonoCliTxt.getText();
+					objClienteBean.setTelefonoCli(telefonoCliTxt.getText());
 
 				}
 				else {
@@ -546,8 +546,8 @@ public class ClaseGUI {
 				if(!(provinciasBox.getItemCount() == 0 || cantonesBox.getItemCount() == 0 || parroquiasBox.getItemCount() == 0)) {
 					
 					lugarResidenciaLblErr.setText("");
-					idLugarGeoStr = actualLugarGeoSeleccionado((String) cantonesBox.getSelectedItem(), (String) parroquiasBox.getSelectedItem());
-				
+					objClienteBean.setIdLugarGeo(actualLugarGeoSeleccionado((String) cantonesBox.getSelectedItem(), (String) parroquiasBox.getSelectedItem()));
+					
 				}
 				else {
 					
@@ -558,11 +558,11 @@ public class ClaseGUI {
 				if(validacion == true) {
 
 					//Ejecutar INSERTS
-					insertarPersona = "INSERT INTO persona (nombrePer, cedulaRUCPer) VALUES (" + "'" +nombreApellidoStr + "'" + "," + "'" +cedulaRucPerStr + "'" + ")";
+					insertarPersona = "INSERT INTO persona (nombrePer, cedulaRUCPer) VALUES (" + "'" +objClienteBean.getNombrePer() + "'" + "," + "'" + objClienteBean.getCedulaRucPer() + "'" + ")";
 					System.out.println("Comando Insertar Persona: " + insertarPersona);
 					cnxCliente.insertar(insertarPersona);
 
-					insertarCliente = "INSERT INTO cliente (correoCli, direccionCli, telefonoCli, idLugarGeo, idPersona) VALUES (" + "'" + correoCliStr + "'" + "," + "'" + direccionCliStr + "'" + "," + "'" + telefonoCliStr + "'" + "," + idLugarGeoStr + "," +"LAST_INSERT_ID()" + ")";
+					insertarCliente = "INSERT INTO cliente (correoCli, direccionCli, telefonoCli, idLugarGeo, idPersona) VALUES (" + "'" + objClienteBean.getCorreoElecCli() + "'" + "," + "'" + objClienteBean.getDireccionCli() + "'" + "," + "'" + objClienteBean.getTelefonoCli() + "'" + "," + objClienteBean.getIdLugarGeo() + "," +"LAST_INSERT_ID()" + ")";
 					System.out.println("Comando Insertar Cliente: " + insertarCliente);
 					cnxCliente.insertar(insertarCliente);
 					
@@ -781,10 +781,9 @@ public class ClaseGUI {
 
 	}
 	
-	public String actualLugarGeoSeleccionado(String canton, String parroquia) {
+	public int actualLugarGeoSeleccionado(String canton, String parroquia) {
 		
 		String query = "SELECT a.idLugarGeo FROM lugar_geo a, lugar_geo b WHERE a.descripcionLugGeo='" + parroquia + "' AND b.descripcionLugGeo='" + canton + "' AND a.idLugarGeoPadre=b.idLugarGeo";
-		String idLugarGeo = null;
 		
 		java.sql.ResultSet result = cnxCliente.consulta(query);
 		
@@ -794,7 +793,7 @@ public class ClaseGUI {
 			
 			while(result.next()) {
 				
-				idLugarGeo = result.getString("idLugarGeo");
+				objLugarGeoBean.setIdLugarGeo(result.getInt("idLugarGeo"));
 				
 			}
 			
@@ -804,7 +803,7 @@ public class ClaseGUI {
 			
 		}
 				
-		return idLugarGeo;
+		return objLugarGeoBean.getIdLugarGeo();
 		
 	}
 

@@ -76,8 +76,8 @@ public class ClaseGUI {
 	private JScrollPane scrollTabla;
 	private ConexionMySql cnxCliente = new ConexionMySql();
 
-	private Cap_PedidoBean objPedidoBean = new Cap_PedidoBean();
 	private ClienteBean objClienteBean = new ClienteBean();
+	private Lugar_GeoBean objLugarGeoBean = new Lugar_GeoBean();
 
 
 	public ClaseGUI(){
@@ -624,15 +624,16 @@ public class ClaseGUI {
 
 			while(result.next()) {
 
-				int idClienteQry = result.getInt("idCliente");
-				int idPersonaQry = result.getInt("idPersona");
-				int idLugarGeoQry = result.getInt("idLugarGeo");
-				String nombrePerQry = result.getString("nombrePer");
-				String cedulaRUCPerQry = result.getString("cedulaRUCPer");
-				String correoCliQry = result.getString("correoCli");
-				String direccionCliQry = result.getString("direccionCli");
-				String telefonoCliQry = result.getString("telefonoCli");
-				model.addRow(new Object[] {idClienteQry, idPersonaQry, idLugarGeoQry, nombrePerQry, cedulaRUCPerQry, correoCliQry, direccionCliQry, telefonoCliQry});
+				objClienteBean.setIdCliente(result.getInt("idCliente"));
+				objClienteBean.setIdPersona(result.getInt("idPersona"));
+				objClienteBean.setIdLugarGeo(result.getInt("idLugarGeo"));
+				
+				objClienteBean.setNombrePer(result.getString("nombrePer"));
+				objClienteBean.setCedulaRucPer(result.getString("cedulaRUCPer"));
+				objClienteBean.setCorreoElecCli(result.getString("correoCli"));
+				objClienteBean.setDireccionCli(result.getString("direccionCli"));
+				objClienteBean.setTelefonoCli(result.getString("telefonoCli"));
+				model.addRow(new Object[] {objClienteBean.getIdCliente(), objClienteBean.getIdPersona(), objClienteBean.getIdLugarGeo(), objClienteBean.getNombrePer(), objClienteBean.getCedulaRucPer(), objClienteBean.getCorreoElecCli(), objClienteBean.getDireccionCli(), objClienteBean.getTelefonoCli()});
 
 			}
 
@@ -647,7 +648,6 @@ public class ClaseGUI {
 	public void consultaInicioProvincias(DefaultComboBoxModel<String> provinciasModel) {
 
 		String query = "SELECT * FROM lugar_geo ORDER BY descripcionLugGeo";
-		String codigoLugGeoQry;
 		
 		java.sql.ResultSet result = cnxCliente.consulta(query);
 		
@@ -657,12 +657,12 @@ public class ClaseGUI {
 
 			while(result.next()) {
 
-				codigoLugGeoQry = result.getString("codigoLugGeo");
+				objLugarGeoBean.setCodigoLugarGeo(result.getString("codigoLugGeo"));
 
-				if(codigoLugGeoQry.length() == 2) {
+				if(objLugarGeoBean.getCodigoLugarGeo().length() == 2) {
 
-					String descripcionLugGeoQry = result.getString("descripcionLugGeo");
-					provinciasModel.addElement(descripcionLugGeoQry);
+					objLugarGeoBean.setDescripcionLugGeo(result.getString("descripcionLugGeo"));
+					provinciasModel.addElement(objLugarGeoBean.getDescripcionLugGeo());
 
 				}
 
@@ -680,7 +680,7 @@ public class ClaseGUI {
 
 		String query = "SELECT * FROM lugar_geo ORDER BY descripcionLugGeo";
 		String queryProvincias = "SELECT lugar_geo.codigoLugGeo FROM lugar_geo WHERE lugar_geo.descripcionLugGeo='" + elementoSeleccionadoProvincia + "'";
-		String codigoLugGeoQry, codigoLugGeoQryProvincias = ""; //Necesarias para realizar el siguente query, y modelar la tabla
+		String codigoLugGeoQryProvincias = ""; //Necesarias para realizar el siguente query, y modelar la tabla
 		
 		java.sql.ResultSet result = cnxCliente.consulta(query);
 		java.sql.ResultSet resultProvincias = cnxCliente.consulta(queryProvincias);
@@ -709,9 +709,9 @@ public class ClaseGUI {
 
 			while(result.next()) {
 
-				codigoLugGeoQry = result.getString("codigoLugGeo");
+				objLugarGeoBean.setCodigoLugarGeo(result.getString("codigoLugGeo"));
 
-				if(codigoLugGeoQry.substring(0, 2).equals(codigoLugGeoQryProvincias ) && codigoLugGeoQry.length() == 6) { //Evitar cargar rovincias, y al mismo tiempo seleccionar las del mismo grupo de provincias
+				if(objLugarGeoBean.getCodigoLugarGeo().substring(0, 2).equals(codigoLugGeoQryProvincias ) && objLugarGeoBean.getCodigoLugarGeo().length() == 6) { //Evitar cargar rovincias, y al mismo tiempo seleccionar las del mismo grupo de provincias
 
 					String descripcionLugGeoQry = result.getString("descripcionLugGeo");
 					cantonesModel.addElement(descripcionLugGeoQry);
@@ -733,7 +733,7 @@ public class ClaseGUI {
 
 		String query = "SELECT * FROM lugar_geo ORDER BY descripcionLugGeo";
 		String queryCantones = "SELECT lugar_geo.codigoLugGeo FROM lugar_geo WHERE lugar_geo.descripcionLugGeo='" + elementoSeleccionadoCanton + "'";
-		String codigoLugGeoQry, codigoLugGeoQryCantones = "";
+		String codigoLugGeoQryCantones = "";
 		
 		java.sql.ResultSet result = cnxCliente.consulta(query);
 		java.sql.ResultSet resultCantones = cnxCliente.consulta(queryCantones);
@@ -761,10 +761,10 @@ public class ClaseGUI {
 
 			while(result.next()) {
 
-				codigoLugGeoQry = result.getString("codigoLugGeo");
+				objLugarGeoBean.setCodigoLugarGeo(result.getString("codigoLugGeo"));
 
-				if(codigoLugGeoQry.length() != 2)
-					if(codigoLugGeoQry.substring(0, 6).equals(codigoLugGeoQryCantones ) && codigoLugGeoQry.length() == 8) { //Control para cargar solo parroquias del mismo canton
+				if(objLugarGeoBean.getCodigoLugarGeo().length() != 2)
+					if(objLugarGeoBean.getCodigoLugarGeo().substring(0, 6).equals(codigoLugGeoQryCantones ) && objLugarGeoBean.getCodigoLugarGeo().length() == 8) { //Control para cargar solo parroquias del mismo canton
 
 						String descripcionLugGeoQry = result.getString("descripcionLugGeo");
 						parroquiasModel.addElement(descripcionLugGeoQry);

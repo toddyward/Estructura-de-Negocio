@@ -5,8 +5,8 @@ public class Lugar_GeoBean {
 	private String CodigoLugarGeo;
 	private String DescripcionLugGeo;
 	
-	private long idLugarGeo;
-	private long idLugarGeoPadre;
+	private int idLugarGeo;
+	private int idLugarGeoPadre;
 	
 	public String getCodigoLugarGeo() {
 		return CodigoLugarGeo;
@@ -24,15 +24,14 @@ public class Lugar_GeoBean {
 		DescripcionLugGeo = descripcionLugGeo;
 	}
 	
-	public long getIdLugarGeo() {
+	public int getIdLugarGeo() {
 		return idLugarGeo;
 	}
 	
 	public void setIdLugarGeo(int idLugarGeo) {
 		this.idLugarGeo = idLugarGeo;
 	}
-	
-	public long getIdLugarGeo1() {
+	public int getIdLugarGeo1() {
 		return idLugarGeoPadre;
 	}
 	

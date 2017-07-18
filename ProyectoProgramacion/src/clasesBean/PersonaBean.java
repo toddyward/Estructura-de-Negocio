@@ -5,7 +5,7 @@ public class  PersonaBean {
 	private String CedulaRucPer;
 	private String NombrePer;
 	
-	private long idPersona;
+	private int idPersona;
 
 	public String getCedulaRucPer() {
 		return CedulaRucPer;
@@ -23,11 +23,11 @@ public class  PersonaBean {
 		NombrePer = nombrePer;
 	}
 
-	public long getIdPersona() {
+	public int getIdPersona() {
 		return idPersona;
 	}
 
-	public void setIdPersona(long idPersona) {
+	public void setIdPersona(int idPersona) {
 		this.idPersona = idPersona;
 	}
 	

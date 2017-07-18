@@ -6,8 +6,8 @@ public class ClienteBean extends PersonaBean {
 	private String direccionCli;
 	private String telefonoCli;
 	
-	private long idCliente;
-	private long idLugarGeo;
+	private int idCliente;
+	private int idLugarGeo;
 	
 	public String getCorreoElecCli() {
 		return correoCli;
@@ -33,7 +33,7 @@ public class ClienteBean extends PersonaBean {
 		this.telefonoCli = telefonoCli;
 	}
 	
-	public long getIdCliente() {
+	public int getIdCliente() {
 		return idCliente;
 	}
 	
@@ -41,7 +41,7 @@ public class ClienteBean extends PersonaBean {
 		this.idCliente = idCliente;
 	}
 	
-	public long getIdLugarGeo() {
+	public int getIdLugarGeo() {
 		return idLugarGeo;
 	}
 	

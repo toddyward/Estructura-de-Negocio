@@ -70,7 +70,7 @@ public class ClaseGUI {
 	private JTable tablaDeDatos;
 
 	private JButton agregar;
-	private JButton cancelar;
+	private JButton editar;
 	private JButton salir;
 
 	private JScrollPane scrollTabla;
@@ -261,7 +261,7 @@ public class ClaseGUI {
 		direccionCliTxt = new JTextField();
 		direccionCliTxt.setPreferredSize(txtDimension);
 		constraints.gridy++;
-		
+
 		constraints.insets = insetNulo;
 		panel1.add(direccionCliTxt, constraints);
 
@@ -315,9 +315,10 @@ public class ClaseGUI {
 		panelLugarGeografico.add(provincias, constraintsLugGeografico);
 
 		provinciasModel = new DefaultComboBoxModel<String>();
-		consultaInicioProvincias(provinciasModel);	//Cargar las provincias de manera predeterminada
 
-		provinciasBox = new JComboBox<String>(provinciasModel);
+		provinciasBox = new JComboBox<String>();
+		consultaInicioProvincias(provinciasModel);	//Cargar las provincias de manera predeterminada
+		provinciasBox.setModel(provinciasModel);	//Ejecutar el modelaje en el combobox de Provincias
 		provinciasBox.setPreferredSize(comboBoxDimension);
 		provinciasBox.addActionListener(new ActionListener() {
 
@@ -402,9 +403,9 @@ public class ClaseGUI {
 		panelBotones.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		constraints.gridy++;
 		constraints.anchor = GridBagConstraints.LINE_END;
-		
+
 		GridBagConstraints botonesConstraints = new GridBagConstraints();
-		
+
 		agregar = new JButton();
 		agregar.setText("Agregar");
 		agregar.addActionListener(new ButtonClickListener());
@@ -414,12 +415,12 @@ public class ClaseGUI {
 		botonesConstraints.anchor = GridBagConstraints.LINE_END;
 		panelBotones.add(agregar, botonesConstraints);
 
-		cancelar = new JButton();
-		cancelar.setText("Cancelar");
-		cancelar.addActionListener(new ButtonClickListener());
-		cancelar.setActionCommand("Cancelar");
+		editar = new JButton();
+		editar.setText("Editar");
+		editar.addActionListener(new ButtonClickListener());
+		editar.setActionCommand("Editar");
 		botonesConstraints.gridx++;
-		panelBotones.add(cancelar, botonesConstraints);
+		panelBotones.add(editar, botonesConstraints);
 
 		salir = new JButton();
 		salir.setText("Salir");
@@ -428,8 +429,8 @@ public class ClaseGUI {
 		salir.setActionCommand("Salir");
 		botonesConstraints.gridx++;
 		panelBotones.add(salir, botonesConstraints);	
-		
-		
+
+
 		panel1.add(panelBotones, constraints);
 		mainFrame.add(panel1, constraints);
 
@@ -440,122 +441,16 @@ public class ClaseGUI {
 	private class ButtonClickListener implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			String comando = e.getActionCommand(); 
-			String alerta1 = "Informacion Requerida";
-			String regexSoloLet = "^[\\p{L} .'-]+$";
-			String regexCorreo = "^([_a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(\\.[a-zA-Z]{1,6}))?$"; //Obtenido de: https://stackoverflow.com/questions/42266148/email-validation-regex-java
-
 
 			Boolean validacion = true;
 
 			if(comando.equals("Agregar")) {
 
 				String insertarPersona, insertarCliente;
-				//String nombreApellidoStr = null, cedulaRucPerStr = null, correoCliStr = null, direccionCliStr = null, telefonoCliStr = null, idLugarGeoStr = null;
 
-				//Validacion de datos
+				validacion = validarDatos();
 
-				if(!(nombreSubPerTxt.getText().equals("") || apellidoSubPerTxt.getText().equals(""))) {
-					
-					nombreLblErr.setText("");
-					if(nombreSubPerTxt.getText().matches(regexSoloLet) && apellidoSubPerTxt.getText().matches(regexSoloLet)) {
-						
-						nombreLblErr.setText("");
-						objClienteBean.setNombrePer(nombreSubPerTxt.getText() + " " + apellidoSubPerTxt.getText());
-						
-					}
-					else {
-
-						nombreLblErr.setText("Ingrese un nombre valido");
-						validacion = false;
-
-					}
-
-				}
-				else {
-
-					nombreLblErr.setText(alerta1);
-					validacion = false;
-
-				}
-
-				if(!cedulaRucPerTxt.getText().equals("")) {
-					
-					//Falta validacion de cedula
-					cedulaRucLblErr.setText("");
-					objClienteBean.setCedulaRucPer(cedulaRucPerTxt.getText());
-
-				}
-				else {
-
-					cedulaRucLblErr.setText(alerta1);
-					validacion = false;
-
-				}
-
-				if(!correoCliTxt.getText().equals("")) {
-					
-					correoLblErr.setText("");
-					if(correoCliTxt.getText().matches(regexCorreo)) {
-						
-						correoLblErr.setText("");
-						objClienteBean.setCorreoElecCli(correoCliTxt.getText());
-						
-					}
-					else {
-
-						correoLblErr.setText("Ingrese un correo valido");
-						validacion = false;
-
-					}
-
-				}
-				else {
-
-					correoLblErr.setText(alerta1);
-					validacion = false;
-
-				}
-
-				if(!direccionCliTxt.getText().equals("")) {
-					
-					direccionLblErr.setText("");
-					objClienteBean.setDireccionCli(direccionCliTxt.getText());
-					
-				}
-				else {
-
-					direccionLblErr.setText(alerta1);
-					validacion = false;
-
-				}
-
-				if(!telefonoCliTxt.getText().equals("")) {
-
-					//Falta validar (Autorizacion: Sheila)
-					telefonoLblErr.setText("");
-					objClienteBean.setTelefonoCli(telefonoCliTxt.getText());
-
-				}
-				else {
-
-					telefonoLblErr.setText(alerta1);
-					validacion = false;
-
-				}
-
-				if(!(provinciasBox.getItemCount() == 0 || cantonesBox.getItemCount() == 0 || parroquiasBox.getItemCount() == 0)) {
-					
-					lugarResidenciaLblErr.setText("");
-					objClienteBean.setIdLugarGeo(actualLugarGeoSeleccionado((String) cantonesBox.getSelectedItem(), (String) parroquiasBox.getSelectedItem()));
-					
-				}
-				else {
-					
-					lugarResidenciaLblErr.setText("Seleccione una parroquia");
-					validacion = false;
-				}
-
-				if(validacion == true) {
+				if(validacion) {
 
 					//Ejecutar INSERTS
 					insertarPersona = "INSERT INTO persona (nombrePer, cedulaRUCPer) VALUES (" + "'" +objClienteBean.getNombrePer() + "'" + "," + "'" + objClienteBean.getCedulaRucPer() + "'" + ")";
@@ -565,7 +460,7 @@ public class ClaseGUI {
 					insertarCliente = "INSERT INTO cliente (correoCli, direccionCli, telefonoCli, idLugarGeo, idPersona) VALUES (" + "'" + objClienteBean.getCorreoElecCli() + "'" + "," + "'" + objClienteBean.getDireccionCli() + "'" + "," + "'" + objClienteBean.getTelefonoCli() + "'" + "," + objClienteBean.getIdLugarGeo() + "," +"LAST_INSERT_ID()" + ")";
 					System.out.println("Comando Insertar Cliente: " + insertarCliente);
 					cnxCliente.insertar(insertarCliente);
-					
+
 					//Remover las alertas
 					nombreLblErr.setText("");
 					cedulaRucLblErr.setText("");
@@ -573,7 +468,7 @@ public class ClaseGUI {
 					direccionLblErr.setText("");
 					telefonoLblErr.setText("");
 					lugarResidenciaLblErr.setText("");
-					
+
 					//Inicializar los textFields
 					nombreSubPerTxt.setText("");
 					apellidoSubPerTxt.setText("");
@@ -581,9 +476,73 @@ public class ClaseGUI {
 					correoCliTxt.setText("");
 					direccionCliTxt.setText("");
 					telefonoCliTxt.setText("");
-					
+
 
 				}
+
+				//Remover las filas del modelo para volver a actualizarla
+				while(model.getRowCount() > 0)
+					model.removeRow(0);
+
+				consultaInicio(model);
+
+			}
+
+			if(comando.equals("Editar")) {
+
+				int selectedRow;
+				selectedRow = tablaDeDatos.getSelectedRow();
+
+				if(!(selectedRow == -1)) {
+
+					String[] nomAP = tablaDeDatos.getValueAt(selectedRow, 3).toString().trim().split("\\s+");	//Dividr el nombre completo en nombre y apellido
+					nombreSubPerTxt.setText(nomAP[0]);
+					apellidoSubPerTxt.setText(nomAP[1]);
+
+					idClienteTxt.setText(tablaDeDatos.getValueAt(selectedRow, 0).toString());
+					objClienteBean.setIdCliente(Integer.parseInt(tablaDeDatos.getValueAt(selectedRow, 0).toString()));
+					idPersonaTxt.setText(tablaDeDatos.getValueAt(selectedRow, 1).toString());
+					idLugarGeoTxt.setText(tablaDeDatos.getValueAt(selectedRow, 2).toString());
+					cedulaRucPerTxt.setText(tablaDeDatos.getValueAt(selectedRow, 4).toString());
+					correoCliTxt.setText(tablaDeDatos.getValueAt(selectedRow, 5).toString());
+					direccionCliTxt.setText(tablaDeDatos.getValueAt(selectedRow, 6).toString());
+					telefonoCliTxt.setText(tablaDeDatos.getValueAt(selectedRow, 7).toString());
+					consultarParrCantPro(Integer.parseInt(tablaDeDatos.getValueAt(selectedRow, 2).toString()));
+
+					editar.setText("Actualizar");
+					editar.setActionCommand("Actualizar");
+
+					//Remover las alertas
+					nombreLblErr.setText("");
+					cedulaRucLblErr.setText("");
+					correoLblErr.setText("");
+					direccionLblErr.setText("");
+					telefonoLblErr.setText("");
+					lugarResidenciaLblErr.setText("");
+
+				}
+
+			}
+
+			if(comando.equals("Actualizar")) {
+
+				Boolean validacion2 = validarDatos();
+				
+				if(validacion2) {
+					
+					String actualizarPersona = "INSERT INTO persona (nombrePer, cedulaRUCPer) VALUES (" + "'" +objClienteBean.getNombrePer() + "'" + "," + "'" + objClienteBean.getCedulaRucPer() + "'" + ")";
+					System.out.println("Comando Insertar Persona: " + actualizarPersona);
+					cnxCliente.insertar(actualizarPersona);
+
+					
+					String actualizarCliente = "UPDATE ventas2017a.cliente SET correoCli='" + objClienteBean.getCorreoElecCli() + "', direccionCli='" + objClienteBean.getDireccionCli() + "', telefonoCli='" + objClienteBean.getTelefonoCli() + "', idLugarGeo='" + objClienteBean.getIdLugarGeo() + "', idPersona=" + "LAST_INSERT_ID()" + " WHERE idCliente='" + objClienteBean.getIdCliente() + "'"; 
+					System.out.println("Comando Actualizar Cliente: " + actualizarCliente);
+					cnxCliente.insertar(actualizarCliente);
+					
+				}
+				
+				editar.setText("Editar");
+				editar.setActionCommand("Editar");
 				
 				//Remover las filas del modelo para volver a actualizarla
 				while(model.getRowCount() > 0)
@@ -615,9 +574,9 @@ public class ClaseGUI {
 
 		//Ejecutar query
 		String query = "SELECT cliente.idCliente, cliente.idPersona, cliente.idLugarGeo, persona.nombrePer, persona.cedulaRUCPer, cliente.correoCli, cliente.direccionCli, cliente.telefonoCli FROM cliente, persona, lugar_geo WHERE cliente.idPersona=persona.idPersona AND cliente.idLugarGeo=lugar_geo.idLugarGeo ORDER BY persona.nombrePer";
-		
+
 		java.sql.ResultSet result = cnxCliente.consulta(query);
-		
+
 		System.out.println("Consulta Tabla de datos: " + query + "\n");
 
 		try {
@@ -627,7 +586,7 @@ public class ClaseGUI {
 				objClienteBean.setIdCliente(result.getInt("idCliente"));
 				objClienteBean.setIdPersona(result.getInt("idPersona"));
 				objClienteBean.setIdLugarGeo(result.getInt("idLugarGeo"));
-				
+
 				objClienteBean.setNombrePer(result.getString("nombrePer"));
 				objClienteBean.setCedulaRucPer(result.getString("cedulaRUCPer"));
 				objClienteBean.setCorreoElecCli(result.getString("correoCli"));
@@ -648,9 +607,9 @@ public class ClaseGUI {
 	public void consultaInicioProvincias(DefaultComboBoxModel<String> provinciasModel) {
 
 		String query = "SELECT * FROM lugar_geo ORDER BY descripcionLugGeo";
-		
+
 		java.sql.ResultSet result = cnxCliente.consulta(query);
-		
+
 		System.out.println("Consulta ComboBox Provincias: " + query + "\n");
 
 		try {
@@ -681,10 +640,10 @@ public class ClaseGUI {
 		String query = "SELECT * FROM lugar_geo ORDER BY descripcionLugGeo";
 		String queryProvincias = "SELECT lugar_geo.codigoLugGeo FROM lugar_geo WHERE lugar_geo.descripcionLugGeo='" + elementoSeleccionadoProvincia + "'";
 		String codigoLugGeoQryProvincias = ""; //Necesarias para realizar el siguente query, y modelar la tabla
-		
+
 		java.sql.ResultSet result = cnxCliente.consulta(query);
 		java.sql.ResultSet resultProvincias = cnxCliente.consulta(queryProvincias);
-		
+
 		System.out.println("Consulta ComboBox Cantones: " + query);
 		System.out.println("Consulta ComboBox Cantones (Provincia) " + queryProvincias + "\n");
 
@@ -734,13 +693,13 @@ public class ClaseGUI {
 		String query = "SELECT * FROM lugar_geo ORDER BY descripcionLugGeo";
 		String queryCantones = "SELECT lugar_geo.codigoLugGeo FROM lugar_geo WHERE lugar_geo.descripcionLugGeo='" + elementoSeleccionadoCanton + "'";
 		String codigoLugGeoQryCantones = "";
-		
+
 		java.sql.ResultSet result = cnxCliente.consulta(query);
 		java.sql.ResultSet resultCantones = cnxCliente.consulta(queryCantones);
 
 		System.out.println("Consulta ComboBox Parroquias: " + query);
 		System.out.println("Consulta ComboBox Parroquias (Cantones) " + queryCantones + "\n");
-		
+
 		parroquiasModel.removeAllElements(); //Remover todos los elementos, en caso de seleccionar otro canton o provincia
 
 		try {
@@ -780,32 +739,242 @@ public class ClaseGUI {
 		}
 
 	}
-	
+
 	public int actualLugarGeoSeleccionado(String canton, String parroquia) {
-		
+
 		String query = "SELECT a.idLugarGeo FROM lugar_geo a, lugar_geo b WHERE a.descripcionLugGeo='" + parroquia + "' AND b.descripcionLugGeo='" + canton + "' AND a.idLugarGeoPadre=b.idLugarGeo";
-		
+
 		java.sql.ResultSet result = cnxCliente.consulta(query);
-		
+
 		System.out.println("Consulta Item seleccionado: " + query + "\n");
-		
+
 		try {
-			
+
 			while(result.next()) {
-				
+
 				objLugarGeoBean.setIdLugarGeo(result.getInt("idLugarGeo"));
-				
+
 			}
-			
+
 		}catch(SQLException error) {
-			
+
 			System.out.println(error);
-			
+
 		}
-				
+
 		return objLugarGeoBean.getIdLugarGeo();
+
+	}
+
+	public void consultarParrCantPro(int idLugGeoParroquia) {
+
+		String query = "SELECT lugar_geo.idLugarGeoPadre FROM lugar_geo WHERE lugar_geo.idLugarGeo=" + idLugGeoParroquia;
+		int[] idLugarGeo = new int[4];
+
+		java.sql.ResultSet result = cnxCliente.consulta(query);
+
+		idLugarGeo[2] = idLugGeoParroquia;
+
+		System.out.println("Consulta idParroquia: " + query);
+
+		try {
+
+			while(result.next()) {
+
+				idLugarGeo[1] = result.getInt("idLugarGeoPadre");
+
+			}
+
+		}catch(SQLException error) {
+
+			System.out.println(error);
+
+		}
+
+		query = "SELECT lugar_geo.idLugarGeoPadre FROM lugar_geo WHERE lugar_geo.idLugarGeo=" + idLugarGeo[1];
+
+		result = cnxCliente.consulta(query);
+
+		System.out.println("Consulta idCanton: " + query);
+
+		try {
+
+			while(result.next()) {
+
+				idLugarGeo[0] = result.getInt("idLugarGeoPadre");
+
+			}
+
+		}catch(SQLException error) {
+
+			System.out.print(error);
+
+		}
+
+		String[] datos = new String[4];
+
+		for(int i = 0 ; i < 3 ; i++) {
+
+			query = "SELECT lugar_geo.descripcionLugGeo FROM lugar_geo WHERE lugar_geo.idLugarGeo=" + idLugarGeo[i];
+
+			result = cnxCliente.consulta(query);
+
+			System.out.println("Consulta: " + query);
+
+			try {
+
+				while(result.next()) {
+
+					datos[i] = result.getString("descripcionLugGeo");
+
+				}
+
+			}catch(SQLException error) {
+
+				System.out.println(error);
+
+			}
+		}
+
+		System.out.println("");
+
+		int[] index = new int[4];
+
+		consultaInicioProvincias(provinciasModel);	//Cargar las provincias de manera predeterminada
+		index[0] = provinciasModel.getIndexOf(datos[0]);
+		provinciasBox.setModel(provinciasModel);	//Ejecutar el modelaje en el combobox de Provincias
+		provinciasBox.setSelectedIndex(index[0]);
+
+		consultaInicioCantones(cantonesModel);	//Cargar los cantones de manera predeterminada
+		index[1] = cantonesModel.getIndexOf(datos[1]);
+		cantonesBox.setModel(cantonesModel);	//Ejecutar el modelaje en el combobox de Cantones
+		cantonesBox.setSelectedIndex(index[1]);
+
 		
+		consultaInicioParroquias(parroquiasModel);	//Cargar las parroquias de manera predeterminada
+		index[2] = parroquiasModel.getIndexOf(datos[2]);
+		parroquiasBox.setModel(parroquiasModel);	//Ejecutar el modelaje en el combobox de Parroquias
+		parroquiasBox.setSelectedIndex(index[2]);
+
+
+
+
+	}
+
+	public boolean validarDatos() {
+
+		String alerta1 = "Informacion Requerida";
+		String regexSoloLet = "^[\\p{L} .'-]+$";
+		String regexCorreo = "^([_a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(\\.[a-zA-Z]{1,6}))?$"; //Obtenido de: https://stackoverflow.com/questions/42266148/email-validation-regex-java
+
+		Boolean validacion = true;
+
+		//Validacion de datos
+
+		if(!(nombreSubPerTxt.getText().equals("") || apellidoSubPerTxt.getText().equals(""))) {
+
+			nombreLblErr.setText("");
+			if(nombreSubPerTxt.getText().matches(regexSoloLet) && apellidoSubPerTxt.getText().matches(regexSoloLet)) {
+
+				nombreLblErr.setText("");
+				objClienteBean.setNombrePer(nombreSubPerTxt.getText() + " " + apellidoSubPerTxt.getText());
+
+			}
+			else {
+
+				nombreLblErr.setText("Ingrese un nombre valido");
+				validacion = false;
+
+			}
+
+		}
+		else {
+
+			nombreLblErr.setText(alerta1);
+			validacion = false;
+
+		}
+
+		if(!cedulaRucPerTxt.getText().equals("")) {
+
+			//Falta validacion de cedula
+			cedulaRucLblErr.setText("");
+			objClienteBean.setCedulaRucPer(cedulaRucPerTxt.getText());
+
+		}
+		else {
+
+			cedulaRucLblErr.setText(alerta1);
+			validacion = false;
+
+		}
+
+		if(!correoCliTxt.getText().equals("")) {
+
+			correoLblErr.setText("");
+			if(correoCliTxt.getText().matches(regexCorreo)) {
+
+				correoLblErr.setText("");
+				objClienteBean.setCorreoElecCli(correoCliTxt.getText());
+
+			}
+			else {
+
+				correoLblErr.setText("Ingrese un correo valido");
+				validacion = false;
+
+			}
+
+		}
+		else {
+
+			correoLblErr.setText(alerta1);
+			validacion = false;
+
+		}
+
+		if(!direccionCliTxt.getText().equals("")) {
+
+			direccionLblErr.setText("");
+			objClienteBean.setDireccionCli(direccionCliTxt.getText());
+
+		}
+		else {
+
+			direccionLblErr.setText(alerta1);
+			validacion = false;
+
+		}
+
+		if(!telefonoCliTxt.getText().equals("")) {
+
+			//Falta validar (Autorizacion: Sheila)
+			telefonoLblErr.setText("");
+			objClienteBean.setTelefonoCli(telefonoCliTxt.getText());
+
+		}
+		else {
+
+			telefonoLblErr.setText(alerta1);
+			validacion = false;
+
+		}
+
+		if(!(provinciasBox.getItemCount() == 0 || cantonesBox.getItemCount() == 0 || parroquiasBox.getItemCount() == 0)) {
+
+			lugarResidenciaLblErr.setText("");
+			objClienteBean.setIdLugarGeo(actualLugarGeoSeleccionado((String) cantonesBox.getSelectedItem(), (String) parroquiasBox.getSelectedItem()));
+
+		}
+		else {
+
+			lugarResidenciaLblErr.setText("Seleccione una parroquia");
+			validacion = false;
+		}
+		return validacion;
+
 	}
 
 }
+
 

@@ -1,6 +1,7 @@
 package mysql;
 
 import java.sql.*;
+import clasesGUI.RegistrarClienteGUI;
 
 public class ConexionMySql {
 
@@ -76,6 +77,7 @@ public class ConexionMySql {
 		}catch(SQLException error){
 			
 			System.out.println(error);
+			RegistrarClienteGUI.imprimirErrores(error);
 			
 		}
 		

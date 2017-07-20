@@ -12,9 +12,9 @@ import javax.swing.table.*;
 
 //import com.mysql.jdbc.ResultSet;
 
-public class ClaseGUI {
+public class RegistrarClienteGUI {
 
-	private JFrame mainFrame;
+	private static JFrame mainFrame;
 
 	private JPanel panel1;
 	private JPanel panelID;
@@ -80,7 +80,7 @@ public class ClaseGUI {
 	private Lugar_GeoBean objLugarGeoBean = new Lugar_GeoBean();
 
 
-	public ClaseGUI(){
+	public RegistrarClienteGUI(){
 
 		GUI();
 
@@ -388,7 +388,7 @@ public class ClaseGUI {
 		model.addColumn("Direccion");
 		model.addColumn("Telefono");
 
-		consultaInicio(model); //Modela la tabla con los datos actuales de la base de datos mysql
+		consultaInicioJTable(model); //Modela la tabla con los datos actuales de la base de datos mysql
 
 		tablaDeDatos = new JTable(model);
 		tablaDeDatos.setDefaultEditor(Object.class, null);	//Se puede seleccionar pero no editar
@@ -422,13 +422,13 @@ public class ClaseGUI {
 		botonesConstraints.gridx++;
 		panelBotones.add(editar, botonesConstraints);
 
-		salir = new JButton();
+		/*salir = new JButton();
 		salir.setText("Salir");
 		salir.addActionListener(new ButtonClickListener());
 		salir.setActionCommand("Salir");
 		salir.setActionCommand("Salir");
 		botonesConstraints.gridx++;
-		panelBotones.add(salir, botonesConstraints);	
+		panelBotones.add(salir, botonesConstraints);	*/
 
 
 		panel1.add(panelBotones, constraints);
@@ -484,7 +484,7 @@ public class ClaseGUI {
 				while(model.getRowCount() > 0)
 					model.removeRow(0);
 
-				consultaInicio(model);
+				consultaInicioJTable(model);
 
 			}
 
@@ -502,6 +502,7 @@ public class ClaseGUI {
 					idClienteTxt.setText(tablaDeDatos.getValueAt(selectedRow, 0).toString());
 					objClienteBean.setIdCliente(Integer.parseInt(tablaDeDatos.getValueAt(selectedRow, 0).toString()));
 					idPersonaTxt.setText(tablaDeDatos.getValueAt(selectedRow, 1).toString());
+					objClienteBean.setIdPersona(Integer.parseInt(tablaDeDatos.getValueAt(selectedRow, 1).toString()));
 					idLugarGeoTxt.setText(tablaDeDatos.getValueAt(selectedRow, 2).toString());
 					cedulaRucPerTxt.setText(tablaDeDatos.getValueAt(selectedRow, 4).toString());
 					correoCliTxt.setText(tablaDeDatos.getValueAt(selectedRow, 5).toString());
@@ -527,28 +528,50 @@ public class ClaseGUI {
 			if(comando.equals("Actualizar")) {
 
 				Boolean validacion2 = validarDatos();
-				
+
 				if(validacion2) {
-					
-					String actualizarPersona = "INSERT INTO persona (nombrePer, cedulaRUCPer) VALUES (" + "'" +objClienteBean.getNombrePer() + "'" + "," + "'" + objClienteBean.getCedulaRucPer() + "'" + ")";
-					System.out.println("Comando Insertar Persona: " + actualizarPersona);
+
+					//String actualizarPersona = "INSERT INTO persona (nombrePer, cedulaRUCPer) VALUES (" + "'" +objClienteBean.getNombrePer() + "'" + "," + "'" + objClienteBean.getCedulaRucPer() + "'" + ")";
+					String actualizarPersona = "UPDATE persona SET cedulaRUCPer='" + objClienteBean.getCedulaRucPer() + "', nombrePer='" + objClienteBean.getNombrePer() + "' WHERE idPersona=" + objClienteBean.getIdPersona();
+					System.out.println("Comando Actualizar Persona: " + actualizarPersona);
 					cnxCliente.insertar(actualizarPersona);
 
-					
-					String actualizarCliente = "UPDATE ventas2017a.cliente SET correoCli='" + objClienteBean.getCorreoElecCli() + "', direccionCli='" + objClienteBean.getDireccionCli() + "', telefonoCli='" + objClienteBean.getTelefonoCli() + "', idLugarGeo='" + objClienteBean.getIdLugarGeo() + "', idPersona=" + "LAST_INSERT_ID()" + " WHERE idCliente='" + objClienteBean.getIdCliente() + "'"; 
+
+					String actualizarCliente = "UPDATE ventas2017a.cliente SET correoCli='" + objClienteBean.getCorreoElecCli() + "', direccionCli='" + objClienteBean.getDireccionCli() + "', telefonoCli='" + objClienteBean.getTelefonoCli() + "', idLugarGeo='" + objClienteBean.getIdLugarGeo() + "' WHERE idCliente='" + objClienteBean.getIdCliente() + "'"; 
 					System.out.println("Comando Actualizar Cliente: " + actualizarCliente);
 					cnxCliente.insertar(actualizarCliente);
-					
-				}
-				
-				editar.setText("Editar");
-				editar.setActionCommand("Editar");
-				
-				//Remover las filas del modelo para volver a actualizarla
-				while(model.getRowCount() > 0)
-					model.removeRow(0);
 
-				consultaInicio(model);
+					//Remover las alertas
+					nombreLblErr.setText("");
+					cedulaRucLblErr.setText("");
+					correoLblErr.setText("");
+					direccionLblErr.setText("");
+					telefonoLblErr.setText("");
+					lugarResidenciaLblErr.setText("");
+
+					//Inicializar los textFields
+					nombreSubPerTxt.setText("");
+					apellidoSubPerTxt.setText("");
+					cedulaRucPerTxt.setText("");
+					correoCliTxt.setText("");
+					direccionCliTxt.setText("");
+					telefonoCliTxt.setText("");
+					idClienteTxt.setText("");
+					idPersonaTxt.setText("");
+					idLugarGeoTxt.setText("");
+					
+					editar.setText("Editar");
+					editar.setActionCommand("Editar");
+					
+					//Remover las filas del modelo para volver a actualizarla
+					while(model.getRowCount() > 0)
+						model.removeRow(0);
+
+					consultaInicioJTable(model);
+					
+
+
+				}
 
 			}
 
@@ -557,7 +580,7 @@ public class ClaseGUI {
 
 	public static void main (String args[]){
 
-		new ClaseGUI();
+		new RegistrarClienteGUI();
 
 	}
 
@@ -570,7 +593,7 @@ public class ClaseGUI {
 
 	}
 
-	public void consultaInicio(DefaultTableModel model) {
+	public void consultaInicioJTable(DefaultTableModel model) {
 
 		//Ejecutar query
 		String query = "SELECT cliente.idCliente, cliente.idPersona, cliente.idLugarGeo, persona.nombrePer, persona.cedulaRUCPer, cliente.correoCli, cliente.direccionCli, cliente.telefonoCli FROM cliente, persona, lugar_geo WHERE cliente.idPersona=persona.idPersona AND cliente.idLugarGeo=lugar_geo.idLugarGeo ORDER BY persona.nombrePer";
@@ -840,6 +863,7 @@ public class ClaseGUI {
 
 		int[] index = new int[4];
 
+		provinciasBox.removeAllItems();	//Eliminar los items cargados anteriormente
 		consultaInicioProvincias(provinciasModel);	//Cargar las provincias de manera predeterminada
 		index[0] = provinciasModel.getIndexOf(datos[0]);
 		provinciasBox.setModel(provinciasModel);	//Ejecutar el modelaje en el combobox de Provincias
@@ -850,7 +874,7 @@ public class ClaseGUI {
 		cantonesBox.setModel(cantonesModel);	//Ejecutar el modelaje en el combobox de Cantones
 		cantonesBox.setSelectedIndex(index[1]);
 
-		
+
 		consultaInicioParroquias(parroquiasModel);	//Cargar las parroquias de manera predeterminada
 		index[2] = parroquiasModel.getIndexOf(datos[2]);
 		parroquiasBox.setModel(parroquiasModel);	//Ejecutar el modelaje en el combobox de Parroquias
@@ -877,7 +901,7 @@ public class ClaseGUI {
 			if(nombreSubPerTxt.getText().matches(regexSoloLet) && apellidoSubPerTxt.getText().matches(regexSoloLet)) {
 
 				nombreLblErr.setText("");
-				objClienteBean.setNombrePer(nombreSubPerTxt.getText() + " " + apellidoSubPerTxt.getText());
+				objClienteBean.setNombrePer(nombreSubPerTxt.getText().trim() + " " + apellidoSubPerTxt.getText().trim());
 
 			}
 			else {
@@ -899,7 +923,7 @@ public class ClaseGUI {
 
 			//Falta validacion de cedula
 			cedulaRucLblErr.setText("");
-			objClienteBean.setCedulaRucPer(cedulaRucPerTxt.getText());
+			objClienteBean.setCedulaRucPer(cedulaRucPerTxt.getText().trim());
 
 		}
 		else {
@@ -915,7 +939,7 @@ public class ClaseGUI {
 			if(correoCliTxt.getText().matches(regexCorreo)) {
 
 				correoLblErr.setText("");
-				objClienteBean.setCorreoElecCli(correoCliTxt.getText());
+				objClienteBean.setCorreoElecCli(correoCliTxt.getText().trim());
 
 			}
 			else {
@@ -936,7 +960,7 @@ public class ClaseGUI {
 		if(!direccionCliTxt.getText().equals("")) {
 
 			direccionLblErr.setText("");
-			objClienteBean.setDireccionCli(direccionCliTxt.getText());
+			objClienteBean.setDireccionCli(direccionCliTxt.getText().trim());
 
 		}
 		else {
@@ -972,6 +996,16 @@ public class ClaseGUI {
 			validacion = false;
 		}
 		return validacion;
+
+	}
+
+	public static void imprimirErrores(SQLException error) {
+
+		if(error.toString().contains("for key 'correoCli'")) 
+			JOptionPane.showMessageDialog(mainFrame, "Error al actualizar datos: El correo ya existe");
+
+		else if(error.toString().contains("for key 'cedulaRUCPer'")) 
+			JOptionPane.showMessageDialog(mainFrame, "Error al actualizar datos: El numero de cedula ya existe");
 
 	}
 

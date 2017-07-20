@@ -71,7 +71,7 @@ public class RegistrarClienteGUI {
 
 	private JButton agregar;
 	private JButton editar;
-	private JButton salir;
+	//private JButton salir;
 
 	private JScrollPane scrollTabla;
 	private ConexionMySql cnxCliente = new ConexionMySql();

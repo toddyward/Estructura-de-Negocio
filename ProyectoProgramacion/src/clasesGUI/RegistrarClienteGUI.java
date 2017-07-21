@@ -6,11 +6,8 @@ import mysql.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
-
 import javax.swing.*;
 import javax.swing.table.*;
-
-//import com.mysql.jdbc.ResultSet;
 
 public class RegistrarClienteGUI {
 
@@ -71,7 +68,7 @@ public class RegistrarClienteGUI {
 
 	private JButton agregar;
 	private JButton editar;
-	//private JButton salir;
+	private JButton cancelar;
 
 	private JScrollPane scrollTabla;
 	private ConexionMySql cnxCliente = new ConexionMySql();
@@ -422,13 +419,12 @@ public class RegistrarClienteGUI {
 		botonesConstraints.gridx++;
 		panelBotones.add(editar, botonesConstraints);
 
-		/*salir = new JButton();
-		salir.setText("Salir");
-		salir.addActionListener(new ButtonClickListener());
-		salir.setActionCommand("Salir");
-		salir.setActionCommand("Salir");
+		cancelar = new JButton();
+		cancelar.setText("Cancelar");
+		cancelar.addActionListener(new ButtonClickListener());
+		cancelar.setActionCommand("Cancelar");
 		botonesConstraints.gridx++;
-		panelBotones.add(salir, botonesConstraints);	*/
+		panelBotones.add(cancelar, botonesConstraints);	
 
 
 		panel1.add(panelBotones, constraints);
@@ -512,7 +508,8 @@ public class RegistrarClienteGUI {
 
 					editar.setText("Actualizar");
 					editar.setActionCommand("Actualizar");
-
+					agregar.setEnabled(false);
+					
 					//Remover las alertas
 					nombreLblErr.setText("");
 					cedulaRucLblErr.setText("");
@@ -569,10 +566,35 @@ public class RegistrarClienteGUI {
 
 					consultaInicioJTable(model);
 					
-
+					agregar.setEnabled(true);
 
 				}
 
+			}
+			
+			if(comando.equals("Cancelar")) {
+				
+				//Remover las alertas
+				nombreLblErr.setText("");
+				cedulaRucLblErr.setText("");
+				correoLblErr.setText("");
+				direccionLblErr.setText("");
+				telefonoLblErr.setText("");
+				lugarResidenciaLblErr.setText("");
+
+				//Inicializar los textFields
+				nombreSubPerTxt.setText("");
+				apellidoSubPerTxt.setText("");
+				cedulaRucPerTxt.setText("");
+				correoCliTxt.setText("");
+				direccionCliTxt.setText("");
+				telefonoCliTxt.setText("");
+				idClienteTxt.setText("");
+				idPersonaTxt.setText("");
+				idLugarGeoTxt.setText("");
+				
+				agregar.setEnabled(true);
+				
 			}
 
 		}

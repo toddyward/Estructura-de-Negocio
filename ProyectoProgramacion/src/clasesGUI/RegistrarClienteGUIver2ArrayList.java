@@ -386,7 +386,10 @@ public class RegistrarClienteGUIver2ArrayList {
 		model.addColumn("Correo");
 		model.addColumn("Direccion");
 		model.addColumn("Telefono");
-
+		model.addColumn("Parroquia");
+		model.addColumn("Canton");
+		model.addColumn("Provincia");
+		
 		consultaInicioJTable(model); //Modela la tabla con los datos actuales de la base de datos mysql
 
 		tablaDeDatos = new JTable(model);
@@ -623,8 +626,10 @@ public class RegistrarClienteGUIver2ArrayList {
 	public void consultaInicioJTable(DefaultTableModel model) {
 
 		//Ejecutar query
-		String query = "SELECT cliente.idCliente, cliente.idPersona, cliente.idLugarGeo, persona.nombrePer, persona.cedulaRUCPer, cliente.correoCli, cliente.direccionCli, cliente.telefonoCli FROM cliente, persona, lugar_geo WHERE cliente.idPersona=persona.idPersona AND cliente.idLugarGeo=lugar_geo.idLugarGeo ORDER BY persona.nombrePer";
-
+		//String query = "SELECT cliente.idCliente, cliente.idPersona, cliente.idLugarGeo, persona.nombrePer, persona.cedulaRUCPer, cliente.correoCli, cliente.direccionCli, cliente.telefonoCli FROM cliente, persona, lugar_geo WHERE cliente.idPersona=persona.idPersona AND cliente.idLugarGeo=lugar_geo.idLugarGeo ORDER BY persona.nombrePer";
+		String query = "SELECT cli.idCliente, cli.idPersona, cli.idLugarGeo, per.nombrePer, per.cedulaRUCPer, cli.correoCli, cli.direccionCli, cli.telefonoCli, luga.descripcionLugGeo AS parroquia, lugb.descripcionLugGeo AS canton, lugc.descripcionLugGeo AS provincia FROM lugar_geo AS luga, lugar_geo AS lugb, lugar_geo AS lugc, cliente AS cli, persona per WHERE cli.idLugarGeo=luga.idLugarGeo AND per.idPersona=cli.idPersona AND luga.idLugarGeoPadre=lugb.idLugarGeo AND lugb.idLugarGeoPadre=lugc.idLugarGeo ORDER BY nombrePer";
+		String parroquia, canton, provincia;
+		
 		ArrayList<Object> datos = new ArrayList<Object>();
 		
 		java.sql.ResultSet result = cnxCliente.consulta(query);
@@ -645,6 +650,11 @@ public class RegistrarClienteGUIver2ArrayList {
 				objClienteBean.setDireccionCli(result.getString("direccionCli"));
 				objClienteBean.setTelefonoCli(result.getString("telefonoCli"));
 				
+				parroquia = result.getString("parroquia");
+				canton = result.getString("canton");
+				provincia = result.getString("provincia");
+				
+				
 				datos.add(objClienteBean.getIdCliente());
 				datos.add(objClienteBean.getIdPersona());
 				datos.add(objClienteBean.getIdLugarGeo());
@@ -654,6 +664,11 @@ public class RegistrarClienteGUIver2ArrayList {
 				datos.add(objClienteBean.getCorreoElecCli());
 				datos.add(objClienteBean.getDireccionCli());
 				datos.add(objClienteBean.getTelefonoCli());
+				
+				datos.add(parroquia);
+				datos.add(canton);
+				datos.add(provincia);
+				
 				
 				model.addRow(datos.toArray());
 				

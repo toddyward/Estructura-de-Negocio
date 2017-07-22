@@ -384,6 +384,9 @@ public class RegistrarClienteGUI {
 		model.addColumn("Correo");
 		model.addColumn("Direccion");
 		model.addColumn("Telefono");
+		model.addColumn("Provincia");
+		model.addColumn("Canton");
+		model.addColumn("Parroquia");
 
 		consultaInicioJTable(model); //Modela la tabla con los datos actuales de la base de datos mysql
 
@@ -621,8 +624,11 @@ public class RegistrarClienteGUI {
 	public void consultaInicioJTable(DefaultTableModel model) {
 
 		//Ejecutar query
-		String query = "SELECT cliente.idCliente, cliente.idPersona, cliente.idLugarGeo, persona.nombrePer, persona.cedulaRUCPer, cliente.correoCli, cliente.direccionCli, cliente.telefonoCli FROM cliente, persona, lugar_geo WHERE cliente.idPersona=persona.idPersona AND cliente.idLugarGeo=lugar_geo.idLugarGeo ORDER BY persona.nombrePer";
-
+		//String query = "SELECT cliente.idCliente, cliente.idPersona, cliente.idLugarGeo, persona.nombrePer, persona.cedulaRUCPer, cliente.correoCli, cliente.direccionCli, cliente.telefonoCli FROM cliente, persona, lugar_geo WHERE cliente.idPersona=persona.idPersona AND cliente.idLugarGeo=lugar_geo.idLugarGeo ORDER BY persona.nombrePer";
+		String query = "SELECT cli.idCliente, cli.idPersona, cli.idLugarGeo, per.nombrePer, per.cedulaRUCPer, cli.correoCli, cli.direccionCli, cli.telefonoCli, luga.descripcionLugGeo AS parroquia, lugb.descripcionLugGeo AS canton, lugc.descripcionLugGeo AS provincia FROM lugar_geo AS luga, lugar_geo AS lugb, lugar_geo AS lugc, cliente AS cli, persona per WHERE cli.idLugarGeo=luga.idLugarGeo AND per.idPersona=cli.idPersona AND luga.idLugarGeoPadre=lugb.idLugarGeo AND lugb.idLugarGeoPadre=lugc.idLugarGeo ORDER BY nombrePer";
+		
+		String parroquia, canton, provincia;
+		
 		java.sql.ResultSet result = cnxCliente.consulta(query);
 
 		System.out.println("Consulta Tabla de datos: " + query + "\n");
@@ -640,7 +646,12 @@ public class RegistrarClienteGUI {
 				objClienteBean.setCorreoElecCli(result.getString("correoCli"));
 				objClienteBean.setDireccionCli(result.getString("direccionCli"));
 				objClienteBean.setTelefonoCli(result.getString("telefonoCli"));
-				model.addRow(new Object[] {objClienteBean.getIdCliente(), objClienteBean.getIdPersona(), objClienteBean.getIdLugarGeo(), objClienteBean.getNombrePer(), objClienteBean.getCedulaRucPer(), objClienteBean.getCorreoElecCli(), objClienteBean.getDireccionCli(), objClienteBean.getTelefonoCli()});
+				
+				parroquia = result.getString("parroquia");
+				canton = result.getString("canton");
+				provincia = result.getString("provincia");
+				
+				model.addRow(new Object[] {objClienteBean.getIdCliente(), objClienteBean.getIdPersona(), objClienteBean.getIdLugarGeo(), objClienteBean.getNombrePer(), objClienteBean.getCedulaRucPer(), objClienteBean.getCorreoElecCli(), objClienteBean.getDireccionCli(), objClienteBean.getTelefonoCli(), parroquia, canton, provincia});
 
 			}
 

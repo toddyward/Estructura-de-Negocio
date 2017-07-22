@@ -384,9 +384,9 @@ public class RegistrarClienteGUI {
 		model.addColumn("Correo");
 		model.addColumn("Direccion");
 		model.addColumn("Telefono");
-		model.addColumn("Provincia");
-		model.addColumn("Canton");
 		model.addColumn("Parroquia");
+		model.addColumn("Canton");
+		model.addColumn("Provincia");
 
 		consultaInicioJTable(model); //Modela la tabla con los datos actuales de la base de datos mysql
 

@@ -509,7 +509,7 @@ public class RegistrarClienteGUI {
 					editar.setText("Actualizar");
 					editar.setActionCommand("Actualizar");
 					agregar.setEnabled(false);
-					
+
 					//Remover las alertas
 					nombreLblErr.setText("");
 					cedulaRucLblErr.setText("");
@@ -556,24 +556,24 @@ public class RegistrarClienteGUI {
 					idClienteTxt.setText("");
 					idPersonaTxt.setText("");
 					idLugarGeoTxt.setText("");
-					
+
 					editar.setText("Editar");
 					editar.setActionCommand("Editar");
-					
+
 					//Remover las filas del modelo para volver a actualizarla
 					while(model.getRowCount() > 0)
 						model.removeRow(0);
 
 					consultaInicioJTable(model);
-					
+
 					agregar.setEnabled(true);
 
 				}
 
 			}
-			
+
 			if(comando.equals("Cancelar")) {
-				
+
 				//Remover las alertas
 				nombreLblErr.setText("");
 				cedulaRucLblErr.setText("");
@@ -592,19 +592,22 @@ public class RegistrarClienteGUI {
 				idClienteTxt.setText("");
 				idPersonaTxt.setText("");
 				idLugarGeoTxt.setText("");
-				
+
 				agregar.setEnabled(true);
-				
+
 			}
 
 		}
 	}
+	
+	
 
 	public static void main (String args[]){
 
 		new RegistrarClienteGUI();
-
+		
 	}
+
 
 	public void centrarFrame(JFrame framePrincipal){
 
@@ -717,8 +720,8 @@ public class RegistrarClienteGUI {
 
 				if(objLugarGeoBean.getCodigoLugarGeo().substring(0, 2).equals(codigoLugGeoQryProvincias ) && objLugarGeoBean.getCodigoLugarGeo().length() == 6) { //Evitar cargar rovincias, y al mismo tiempo seleccionar las del mismo grupo de provincias
 
-					String descripcionLugGeoQry = result.getString("descripcionLugGeo");
-					cantonesModel.addElement(descripcionLugGeoQry);
+					objLugarGeoBean.setDescripcionLugGeo(result.getString("descripcionLugGeo"));
+					cantonesModel.addElement(objLugarGeoBean.getDescripcionLugGeo());
 
 				}
 
@@ -770,8 +773,8 @@ public class RegistrarClienteGUI {
 				if(objLugarGeoBean.getCodigoLugarGeo().length() != 2)
 					if(objLugarGeoBean.getCodigoLugarGeo().substring(0, 6).equals(codigoLugGeoQryCantones ) && objLugarGeoBean.getCodigoLugarGeo().length() == 8) { //Control para cargar solo parroquias del mismo canton
 
-						String descripcionLugGeoQry = result.getString("descripcionLugGeo");
-						parroquiasModel.addElement(descripcionLugGeoQry);
+						objLugarGeoBean.setDescripcionLugGeo(result.getString("descripcionLugGeo"));
+						parroquiasModel.addElement(objLugarGeoBean.getDescripcionLugGeo());
 
 					}
 
@@ -1030,6 +1033,8 @@ public class RegistrarClienteGUI {
 			JOptionPane.showMessageDialog(mainFrame, "Error al actualizar datos: El numero de cedula ya existe");
 
 	}
+
+
 
 }
 

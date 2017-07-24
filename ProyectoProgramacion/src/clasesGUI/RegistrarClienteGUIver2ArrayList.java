@@ -599,6 +599,9 @@ public class RegistrarClienteGUIver2ArrayList {
 				idLugarGeoTxt.setText("");
 
 				agregar.setEnabled(true);
+				
+				editar.setText("Editar");
+				editar.setActionCommand("Editar");
 
 			}
 

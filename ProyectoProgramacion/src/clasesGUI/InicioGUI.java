@@ -1,62 +1,102 @@
 package clasesGUI;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import clasesGUI.*;
+
 import javax.swing.*;
 
 public class InicioGUI {
 		
+		private JFrame mainFrame;
+		private JMenuBar menubarra;
+		private JMenu menu;
+		private JButton registrarCliente;
+		private JButton registrarCliente2;
+		private JButton registrarLugarGeografico;
+		
+		
 		public InicioGUI() {
 			
+			showInicioGUI();
 			
 		}
 	
-		public JMenuBar crearMenuSuperior(){
+		public void showInicioGUI() {
 			
-			JMenuBar menubar;
-			JMenu menu;
-			JMenuItem nuevo;
+			mainFrame = new JFrame();
+			mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+			mainFrame.setTitle("Estructura de negocio");
+			mainFrame.setLayout(new GridBagLayout());
 			
-			//Crear la barra de menu
-			menubar = new JMenuBar();
+			GridBagConstraints constraints = new GridBagConstraints();
 			
-			//Crear el menu
+			menubarra = new JMenuBar();
+			mainFrame.setJMenuBar(menubarra);
+			
 			menu = new JMenu();
 			menu.setText("Archivo");
-			menubar.add(menu);
+			menubarra.add(menu);
 			
-			//Agregar un item al menu
-			nuevo = new JMenu();
-			nuevo.setText("Nuevo");
-			menu.add(nuevo);
+			Dimension dimensionBotones = new Dimension(300, 40);
 			
-			return menubar;
+			registrarCliente = new JButton();
+			registrarCliente.setText("Registrar cliente V1");
+			registrarCliente.addActionListener(new ButtonClickListener());
+			registrarCliente.setActionCommand(registrarCliente.getText());
+			registrarCliente.setPreferredSize(dimensionBotones);
+			constraints.insets = new Insets(0, 0, 25, 0);
+			constraints.gridx = 0;
+			constraints.gridy = 0;
+			
+			mainFrame.add(registrarCliente, constraints);
+			
+			registrarCliente2 = new JButton();
+			registrarCliente2.setText("Registrar cliente V2");
+			registrarCliente2.addActionListener(new ButtonClickListener());
+			registrarCliente2.setActionCommand(registrarCliente2.getText());
+			registrarCliente2.setPreferredSize(dimensionBotones);
+			constraints.gridy++;
+			mainFrame.add(registrarCliente2, constraints);
+			
+			registrarLugarGeografico = new JButton();
+			registrarLugarGeografico.setText("Registrar Lugar Geografico");
+			registrarLugarGeografico.addActionListener(new ButtonClickListener());
+			registrarLugarGeografico.setActionCommand(registrarLugarGeografico.getText());
+			registrarLugarGeografico.setPreferredSize(dimensionBotones);
+			constraints.gridy++;
+			mainFrame.add(registrarLugarGeografico, constraints);
+			
+			mainFrame.setVisible(true);
 			
 		}
 		
-		public static void menuPrincipal() {
+		private class ButtonClickListener implements ActionListener{
 			
-			JFrame menuPrincipal;
-			
-			menuPrincipal = new JFrame();
-			
-			//Agregar barra de menu al frame
-			InicioGUI GUI = new InicioGUI();
-			menuPrincipal.setJMenuBar(GUI.crearMenuSuperior());
-			
-			menuPrincipal.setExtendedState(JFrame.MAXIMIZED_BOTH);
-			menuPrincipal.setVisible(true);
+			public void actionPerformed (ActionEvent e) {
+				
+				String command = e.getActionCommand();
+				
+				if(command.equals(registrarCliente.getText())) 
+					new RegistrarClienteGUI();
+				
+				else if(command.equals(registrarCliente2.getText()))
+					new RegistrarClienteGUIver2ArrayList();
+				
+				else if(command.equals(registrarLugarGeografico.getText()))
+					new RegistrarLugarGeograficoGUI();
+					
+				
+				
+			}
 			
 		}
+		
 		
 		public static void main (String[] args)	{
-			
-			javax.swing.SwingUtilities.invokeLater(new Runnable() {
-				
-				public void run() {
-				
-					menuPrincipal();
-					
-				}
-			});
+		
+			new InicioGUI();
 			
 		}
 }

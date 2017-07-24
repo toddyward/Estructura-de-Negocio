@@ -12,6 +12,10 @@ public class InicioGUI {
 		private JFrame mainFrame;
 		private JMenuBar menubarra;
 		private JMenu menu;
+		private JMenuItem registrarClienteItm;
+		private JMenuItem registrarCliente2Itm;
+		private JMenuItem registrarLugarGeograficoItm;
+		
 		private JButton registrarCliente;
 		private JButton registrarCliente2;
 		private JButton registrarLugarGeografico;
@@ -39,9 +43,26 @@ public class InicioGUI {
 			menu.setText("Archivo");
 			menubarra.add(menu);
 			
+			registrarClienteItm = new JMenuItem("Registrar Cliente V1");
+			registrarClienteItm.addActionListener(new ButtonClickListener());
+			registrarClienteItm.setActionCommand("registrarClienteItm");
+			menu.add(registrarClienteItm);
+			
+			registrarCliente2Itm = new JMenuItem("Registrar Cliente V2");
+			registrarCliente2Itm.addActionListener(new ButtonClickListener());
+			registrarCliente2Itm.setActionCommand("registrarCliente2Itm");
+			menu.add(registrarCliente2Itm);
+			
+			registrarLugarGeograficoItm = new JMenuItem("Registrar Lugar Geografico");
+			registrarLugarGeograficoItm.addActionListener(new ButtonClickListener());
+			registrarLugarGeograficoItm.setActionCommand("registrarLugarGeograficoItm");
+			menu.add(registrarLugarGeograficoItm);
+			
+			
+			
 			Dimension dimensionBotones = new Dimension(300, 40);
 			
-			registrarCliente = new JButton();
+			/*registrarCliente = new JButton();
 			registrarCliente.setText("Registrar cliente V1");
 			registrarCliente.addActionListener(new ButtonClickListener());
 			registrarCliente.setActionCommand(registrarCliente.getText());
@@ -66,7 +87,7 @@ public class InicioGUI {
 			registrarLugarGeografico.setActionCommand(registrarLugarGeografico.getText());
 			registrarLugarGeografico.setPreferredSize(dimensionBotones);
 			constraints.gridy++;
-			mainFrame.add(registrarLugarGeografico, constraints);
+			mainFrame.add(registrarLugarGeografico, constraints);*/
 			
 			mainFrame.setVisible(true);
 			
@@ -78,14 +99,23 @@ public class InicioGUI {
 				
 				String command = e.getActionCommand();
 				
-				if(command.equals(registrarCliente.getText())) 
+				/*if(command.equals(registrarCliente.getText())) 
 					new RegistrarClienteGUI();
 				
 				else if(command.equals(registrarCliente2.getText()))
 					new RegistrarClienteGUIver2ArrayList();
 				
 				else if(command.equals(registrarLugarGeografico.getText()))
-					new RegistrarLugarGeograficoGUI();
+					new RegistrarLugarGeograficoGUI();*/
+				
+				if(command.equals("registrarClienteItm")) 
+				new RegistrarClienteGUI();
+			
+			else if(command.equals("registrarCliente2Itm"))
+				new RegistrarClienteGUIver2ArrayList();
+			
+			else if(command.equals("registrarLugarGeograficoItm"))
+				new RegistrarLugarGeograficoGUI();
 					
 			}
 			

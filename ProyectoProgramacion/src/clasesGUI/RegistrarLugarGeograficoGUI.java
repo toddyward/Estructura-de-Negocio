@@ -39,6 +39,7 @@ public class RegistrarLugarGeograficoGUI {
 	private JButton agregar;
 	private JButton editar;
 	private JButton eliminar;
+	private JButton cancelar;
 
 	private JTable tabla;
 
@@ -212,7 +213,7 @@ public class RegistrarLugarGeograficoGUI {
 		panelButton = new JPanel();
 
 		panelButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-		panelButton.setLayout(new GridLayout(1, 3));
+		panelButton.setLayout(new GridLayout(1, 4));
 		constraints.gridx++;
 		constraints.gridy++;
 		constraints.insets = new Insets(15, -300, 0, 0);
@@ -237,6 +238,12 @@ public class RegistrarLugarGeograficoGUI {
 		eliminar.setActionCommand(eliminar.getText());
 		panelButton.add(eliminar);
 
+		cancelar = new JButton();
+		cancelar.setText("Cancelar");
+		cancelar.addActionListener(new ButtonClickListener());
+		cancelar.setActionCommand(cancelar.getText());
+		panelButton.add(cancelar);
+
 		mainFrame.add(panel1);
 		mainFrame.setVisible(true);
 	}
@@ -255,7 +262,7 @@ public class RegistrarLugarGeograficoGUI {
 
 	public void consultaInicio(DefaultTableModel modeloTabla) {
 
-		String query = "SELECT a.idLugarGeo, a.idLugarGeoPadre, a.codigoLugGeo, a.descripcionLugGeo FROM lugar_geo a";
+		String query = "SELECT a.idLugarGeo, a.idLugarGeoPadre, a.codigoLugGeo, a.descripcionLugGeo FROM lugar_geo a ORDER BY a.codigoLugGeo";
 
 		java.sql.ResultSet result = conexion.consulta(query);
 
@@ -276,8 +283,6 @@ public class RegistrarLugarGeograficoGUI {
 					modeloTabla.addRow(new Object[] {objLugarGeoBean.getIdLugarGeo(), objLugarGeoBean.getIdLugarGeo1(), objLugarGeoBean.getCodigoLugarGeo(), objLugarGeoBean.getDescripcionLugGeo(), "Canton"});		
 				else if(objLugarGeoBean.getCodigoLugarGeo().length() == 8)
 					modeloTabla.addRow(new Object[] {objLugarGeoBean.getIdLugarGeo(), objLugarGeoBean.getIdLugarGeo1(), objLugarGeoBean.getCodigoLugarGeo(), objLugarGeoBean.getDescripcionLugGeo(), "Parroquia"});		
-				else 
-					System.out.println("No se ejecuto");
 
 			}
 
@@ -310,17 +315,22 @@ public class RegistrarLugarGeograficoGUI {
 						codigoAlrt.setText("");
 
 						if(codigoLugarGeograficoTxt.getText().length() == 2)
-							objLugarGeoBean.setCodigoLugarGeo(codigoLugarGeograficoTxt.getText());
+							if(codigoLugarGeograficoTxt.getText().trim().matches("[0-9]*"))
+								objLugarGeoBean.setCodigoLugarGeo(codigoLugarGeograficoTxt.getText());
+							else {
+								codigoAlrt.setText("Solo digitos");
+								validar = false;
+							}
 						else {
 							codigoAlrt.setText("Provincia solo 2 digitos");
 							validar = false;
-							
+
 						}
 					}
 					else {
 						codigoAlrt.setText("Informacion Requerida");
 						validar = false;
-						
+
 					}
 					if(!descripcionLugarGeograficoTxt.getText().equals("")) {
 
@@ -331,61 +341,485 @@ public class RegistrarLugarGeograficoGUI {
 					else {
 						descripcionAlrt.setText("Informacion Requerida");
 						validar = false;
-						
+
 					}
-					
+
 					if(validar) {
-						
+
 						String agregarLugarGeografico = "INSERT INTO ventas2017a.lugar_geo (codigoLugGeo, descripcionLugGeo) VALUES ('" + objLugarGeoBean.getCodigoLugarGeo() + "', '"+ objLugarGeoBean.getDescripcionLugGeo() +"')";
 						System.out.println("Ingresar: "+ agregarLugarGeografico);
 						conexion.insertar(agregarLugarGeografico);
-						
+
 						while(modeloTabla.getRowCount() > 0)
 							modeloTabla.removeRow(0);
-						
+
 						consultaInicio(modeloTabla);
-						
+
+						//Remover valores
+						codigoLugarGeograficoTxt.setText("");
+						descripcionLugarGeograficoTxt.setText("");
+
+						//Remover alertas
+						codigoAlrt.setText("");
+						descripcionAlrt.setText("");
+
 					}
-					
+
+				}
+
+				else if(cantonRadioButton.isSelected()) {
+
+					if(!codigoLugarGeograficoTxt.getText().equals("")) {
+
+						codigoAlrt.setText("");
+
+						if(codigoLugarGeograficoTxt.getText().length() == 6) 
+							if(codigoLugarGeograficoTxt.getText().trim().matches("[0-9]*")) {
+								objLugarGeoBean.setCodigoLugarGeo(codigoLugarGeograficoTxt.getText());
+								objLugarGeoBean.setIdLugarGeo1(consultarId(codigoLugarGeograficoTxt.getText()));
+							}
+							else {
+								codigoAlrt.setText("Solo digitos");
+								validar = false;
+
+							}
+						else {
+							codigoAlrt.setText("Canton solo 6 digitos");
+							validar = false;
+
+						}
+					}
+					else {
+						codigoAlrt.setText("Informacion Requerida");
+						validar = false;
+
+					}
+					if(!descripcionLugarGeograficoTxt.getText().equals("")) {
+
+						descripcionAlrt.setText("");
+						objLugarGeoBean.setDescripcionLugGeo(descripcionLugarGeograficoTxt.getText());
+
+					}
+					else {
+						descripcionAlrt.setText("Informacion Requerida");
+						validar = false;
+
+					}
+
+					if(validar) {
+
+						String agregarLugarGeografico = "INSERT INTO ventas2017a.lugar_geo (codigoLugGeo, descripcionLugGeo, idLugarGeoPadre) VALUES ('" + objLugarGeoBean.getCodigoLugarGeo() + "', '"+ objLugarGeoBean.getDescripcionLugGeo() +"', '" + objLugarGeoBean.getIdLugarGeo1() + "')";
+						System.out.println("Ingresar: "+ agregarLugarGeografico);
+						conexion.insertar(agregarLugarGeografico);
+
+						while(modeloTabla.getRowCount() > 0)
+							modeloTabla.removeRow(0);
+
+						consultaInicio(modeloTabla);
+
+						//Remover valores
+						codigoLugarGeograficoTxt.setText("");
+						descripcionLugarGeograficoTxt.setText("");
+
+						//Remover alertas
+						codigoAlrt.setText("");
+						descripcionAlrt.setText("");
+
+					}
+
+
+				}
+
+				else if(parroquiaRadioButton.isSelected()) {
+
+					if(!codigoLugarGeograficoTxt.getText().equals("")) {
+
+						codigoAlrt.setText("");
+
+						if(codigoLugarGeograficoTxt.getText().length() == 8) 
+							if(codigoLugarGeograficoTxt.getText().trim().matches("[0-9]*")) {
+								objLugarGeoBean.setCodigoLugarGeo(codigoLugarGeograficoTxt.getText());
+								objLugarGeoBean.setIdLugarGeo1(consultarId(codigoLugarGeograficoTxt.getText()));
+							}
+							else {
+								codigoAlrt.setText("Solo digitos");
+								validar = false;
+
+							}
+						else {
+							codigoAlrt.setText("Canton solo 6 digitos");
+							validar = false;
+
+						}
+					}
+					else {
+						codigoAlrt.setText("Informacion Requerida");
+						validar = false;
+
+					}
+					if(!descripcionLugarGeograficoTxt.getText().equals("")) {
+
+						descripcionAlrt.setText("");
+						objLugarGeoBean.setDescripcionLugGeo(descripcionLugarGeograficoTxt.getText());
+
+					}
+					else {
+						descripcionAlrt.setText("Informacion Requerida");
+						validar = false;
+
+					}
+
+					if(validar) {
+
+						String agregarLugarGeografico = "INSERT INTO ventas2017a.lugar_geo (codigoLugGeo, descripcionLugGeo, idLugarGeoPadre) VALUES ('" + objLugarGeoBean.getCodigoLugarGeo() + "', '"+ objLugarGeoBean.getDescripcionLugGeo() +"', '" + objLugarGeoBean.getIdLugarGeo1() + "')";
+						System.out.println("Ingresar: "+ agregarLugarGeografico);
+						conexion.insertar(agregarLugarGeografico);
+
+						while(modeloTabla.getRowCount() > 0)
+							modeloTabla.removeRow(0);
+
+						consultaInicio(modeloTabla);
+
+						//Remover valores
+						codigoLugarGeograficoTxt.setText("");
+						descripcionLugarGeograficoTxt.setText("");
+
+						//Remover alertas
+						codigoAlrt.setText("");
+						descripcionAlrt.setText("");
+
+					}
+
 				}
 
 			}
-			
+
+			if(command.equals("Editar")) {
+
+				System.out.println("Ejecutando boton Editar");
+
+				String tipo = "";
+				int selectedRow = tabla.getSelectedRow();
+
+				if(!(selectedRow == -1)) {
+
+					idLugarGeoTxt.setText(tabla.getValueAt(selectedRow, 0).toString());
+					idLugarGeoPadreTxt.setText(tabla.getValueAt(selectedRow, 1).toString());
+
+					tipo = tabla.getValueAt(selectedRow, 4).toString();
+
+					if(tipo.equals("Provincia"))
+						provinciaRadioButton.setSelected(true);
+					else if(tipo.equals("Canton"))
+						cantonRadioButton.setSelected(true);
+					else if(tipo.equals("Parroquia"))
+						parroquiaRadioButton.setSelected(true);
+
+					codigoLugarGeograficoTxt.setText(tabla.getValueAt(selectedRow, 2).toString());
+					descripcionLugarGeograficoTxt.setText(tabla.getValueAt(selectedRow, 3).toString());
+
+					//Remover alertas
+					codigoAlrt.setText("");
+					descripcionAlrt.setText("");
+
+				}
+
+				editar.setText("Actualizar");
+				editar.setActionCommand("Actualizar");
+
+
+			}
+
+			if(command.equals("Actualizar")) {
+
+				System.out.println("Ejecutando boton Actualizar");
+
+				if(provinciaRadioButton.isSelected()) {
+
+					if(!codigoLugarGeograficoTxt.getText().equals("")) {
+
+						codigoAlrt.setText("");
+
+						if(codigoLugarGeograficoTxt.getText().length() == 2)
+							if(codigoLugarGeograficoTxt.getText().trim().matches("[0-9]*"))
+								objLugarGeoBean.setCodigoLugarGeo(codigoLugarGeograficoTxt.getText());
+							else {
+								codigoAlrt.setText("Solo digitos");
+								validar = false;
+							}
+						else {
+							codigoAlrt.setText("Provincia solo 2 digitos");
+							validar = false;
+
+						}
+					}
+					else {
+						codigoAlrt.setText("Informacion Requerida");
+						validar = false;
+
+					}
+					if(!descripcionLugarGeograficoTxt.getText().equals("")) {
+
+						descripcionAlrt.setText("");
+						objLugarGeoBean.setDescripcionLugGeo(descripcionLugarGeograficoTxt.getText());
+
+					}
+					else {
+						descripcionAlrt.setText("Informacion Requerida");
+						validar = false;
+
+					}
+
+					if(validar) {
+
+						objLugarGeoBean.setIdLugarGeo(Integer.parseInt(idLugarGeoTxt.getText()));
+
+						String actualizarLugarGeografico = "UPDATE ventas2017a.lugar_geo SET codigoLugGeo='" + objLugarGeoBean.getCodigoLugarGeo() + "', descripcionLugGeo='" + objLugarGeoBean.getDescripcionLugGeo() + "' WHERE idLugarGeo='" + objLugarGeoBean.getIdLugarGeo() + "'";
+						System.out.println("Actualizar provincia: " + actualizarLugarGeografico);
+						conexion.insertar(actualizarLugarGeografico);
+
+						while(modeloTabla.getRowCount() > 0)
+							modeloTabla.removeRow(0);
+
+						consultaInicio(modeloTabla);
+
+						//Remover valores
+						codigoLugarGeograficoTxt.setText("");
+						descripcionLugarGeograficoTxt.setText("");
+						idLugarGeoTxt.setText("");
+						idLugarGeoPadreTxt.setText("");
+
+						//Remover alertas
+						codigoAlrt.setText("");
+						descripcionAlrt.setText("");
+
+					}
+
+				}
+
+				else if(cantonRadioButton.isSelected()) {
+
+					if(!codigoLugarGeograficoTxt.getText().equals("")) {
+
+						codigoAlrt.setText("");
+
+						if(codigoLugarGeograficoTxt.getText().length() == 6) 
+							if(codigoLugarGeograficoTxt.getText().trim().matches("[0-9]*")) {
+								objLugarGeoBean.setCodigoLugarGeo(codigoLugarGeograficoTxt.getText());
+								objLugarGeoBean.setIdLugarGeo1(consultarId(codigoLugarGeograficoTxt.getText()));
+							}
+							else {
+								codigoAlrt.setText("Solo digitos");
+								validar = false;
+
+							}
+						else {
+							codigoAlrt.setText("Canton solo 6 digitos");
+							validar = false;
+
+						}
+					}
+					else {
+						codigoAlrt.setText("Informacion Requerida");
+						validar = false;
+
+					}
+					if(!descripcionLugarGeograficoTxt.getText().equals("")) {
+
+						descripcionAlrt.setText("");
+						objLugarGeoBean.setDescripcionLugGeo(descripcionLugarGeograficoTxt.getText());
+
+					}
+					else {
+						descripcionAlrt.setText("Informacion Requerida");
+						validar = false;
+
+					}
+
+					if(validar) {
+
+						objLugarGeoBean.setIdLugarGeo(Integer.parseInt(idLugarGeoTxt.getText()));
+
+						String actualizarLugarGeografico = "UPDATE ventas2017a.lugar_geo SET codigoLugGeo='" + objLugarGeoBean.getCodigoLugarGeo() + "', descripcionLugGeo='" + objLugarGeoBean.getDescripcionLugGeo() + "', idLugarGeoPadre='" + objLugarGeoBean.getIdLugarGeo1() + "' WHERE `idLugarGeo`='" + objLugarGeoBean.getIdLugarGeo() + "'";
+						System.out.println("Actualizar canton: " + actualizarLugarGeografico);
+						conexion.insertar(actualizarLugarGeografico);
+
+						while(modeloTabla.getRowCount() > 0)
+							modeloTabla.removeRow(0);
+
+						consultaInicio(modeloTabla);
+
+						//Remover valores
+						codigoLugarGeograficoTxt.setText("");
+						descripcionLugarGeograficoTxt.setText("");
+						idLugarGeoTxt.setText("");
+						idLugarGeoPadreTxt.setText("");
+
+						//Remover alertas
+						codigoAlrt.setText("");
+						descripcionAlrt.setText("");
+
+					}
+
+
+				}
+
+				else if(parroquiaRadioButton.isSelected()) {
+
+					if(!codigoLugarGeograficoTxt.getText().equals("")) {
+
+						codigoAlrt.setText("");
+
+						if(codigoLugarGeograficoTxt.getText().length() == 8) 
+							if(codigoLugarGeograficoTxt.getText().trim().matches("[0-9]*")) {
+								objLugarGeoBean.setCodigoLugarGeo(codigoLugarGeograficoTxt.getText());
+								objLugarGeoBean.setIdLugarGeo1(consultarId(codigoLugarGeograficoTxt.getText()));
+							}
+							else {
+								codigoAlrt.setText("Solo digitos");
+								validar = false;
+
+							}
+						else {
+							codigoAlrt.setText("Canton solo 6 digitos");
+							validar = false;
+
+						}
+					}
+					else {
+						codigoAlrt.setText("Informacion Requerida");
+						validar = false;
+
+					}
+					if(!descripcionLugarGeograficoTxt.getText().equals("")) {
+
+						descripcionAlrt.setText("");
+						objLugarGeoBean.setDescripcionLugGeo(descripcionLugarGeograficoTxt.getText());
+
+					}
+					else {
+						descripcionAlrt.setText("Informacion Requerida");
+						validar = false;
+
+					}
+
+					if(validar) {
+
+						objLugarGeoBean.setIdLugarGeo(Integer.parseInt(idLugarGeoTxt.getText()));
+
+						String agregarLugarGeografico = "UPDATE ventas2017a.lugar_geo SET codigoLugGeo='" + objLugarGeoBean.getCodigoLugarGeo() + "', descripcionLugGeo='" + objLugarGeoBean.getDescripcionLugGeo() + "', idLugarGeoPadre='" + objLugarGeoBean.getIdLugarGeo1() + "' WHERE `idLugarGeo`='" + objLugarGeoBean.getIdLugarGeo() + "'";
+						System.out.println("Actualizar parroquia: "+ agregarLugarGeografico);
+						conexion.insertar(agregarLugarGeografico);
+
+						while(modeloTabla.getRowCount() > 0)
+							modeloTabla.removeRow(0);
+
+						consultaInicio(modeloTabla);
+
+						//Remover valores
+						codigoLugarGeograficoTxt.setText("");
+						descripcionLugarGeograficoTxt.setText("");
+						idLugarGeoTxt.setText("");
+						idLugarGeoPadreTxt.setText("");
+
+						//Remover alertas
+						codigoAlrt.setText("");
+						descripcionAlrt.setText("");
+
+					}
+
+				}
+
+
+				editar.setText("Editar");
+				editar.setActionCommand("Editar");
+
+			}
+
+
+
 			if(command.equals(eliminar.getText())) {
-				
+
 				System.out.println("Ejecutando boton Eliminar");
 				System.out.println("Fila seleccionada: " + tabla.getSelectedRow());
-				
+
 				if(tabla.getSelectedRow() > -1) {
-					
+
 					objLugarGeoBean.setIdLugarGeo(Integer.parseInt(tabla.getValueAt(tabla.getSelectedRow(), 0).toString()));
-					
+
 					int opcion = JOptionPane.showConfirmDialog(mainFrame, "Esta seguro que desea eliminar: " + tabla.getValueAt(tabla.getSelectedRow(), 3).toString(), "Eliminar elemento", 1);
-					
+
 					if(opcion == JOptionPane.YES_OPTION) {
-						
+
 						String eliminar = "DELETE FROM lugar_geo WHERE lugar_geo.idLugarGeo=" + objLugarGeoBean.getIdLugarGeo();
 						System.out.println("Eliminar: " + eliminar);
 						conexion.insertar(eliminar);
-						
+
 						while(modeloTabla.getRowCount() > 0)
 							modeloTabla.removeRow(0);
-						
+
 						consultaInicio(modeloTabla);
-						
+
 					}
-					
+
 				}
 				else {
-					
+
 					JOptionPane.showMessageDialog(mainFrame, "Seleccione un elemento de la Tabla", "Error", 2);
-					
+
 				}
-				
+
+			}
+
+			if(command.equals(cancelar.getText())) {
+
+				System.out.println("Ejecutando boton Cancelar");
+
+				//Remover valores
+				codigoLugarGeograficoTxt.setText("");
+				descripcionLugarGeograficoTxt.setText("");
+
+				//Remover alertas
+				codigoAlrt.setText("");
+				descripcionAlrt.setText("");
+
+				editar.setText("Editar");
+				editar.setActionCommand("Editar");
+
 			}
 
 		}
 
+
+	}
+
+	public int consultarId(String codigoTxt) {
+
+		String codigo = null;
+
+		if(codigoTxt.length() == 6)
+			codigo = codigoTxt.trim().substring(0, 2);
+		else if(codigoTxt.length() == 8)
+			codigo = codigoTxt.trim().substring(0, 6);
+
+		String query = "SELECT a.idLugarGeo FROM lugar_geo a WHERE a.codigoLugGeo='" + codigo + "'";
+		System.out.println("Consulta ID provincia: " + query);
+		java.sql.ResultSet result = conexion.consulta(query);
+
+		try {
+
+			while(result.next()) 
+				objLugarGeoBean.setIdLugarGeo(result.getInt("idLugarGeo"));
+
+		}catch(SQLException error) {
+
+			System.out.println(error);
+
+		}
+
+		System.out.println("Retorna:" + objLugarGeoBean.getIdLugarGeo());
+
+		return objLugarGeoBean.getIdLugarGeo();
 
 	}
 

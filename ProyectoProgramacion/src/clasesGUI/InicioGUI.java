@@ -87,8 +87,6 @@ public class InicioGUI {
 				else if(command.equals(registrarLugarGeografico.getText()))
 					new RegistrarLugarGeograficoGUI();
 					
-				
-				
 			}
 			
 		}

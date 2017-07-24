@@ -721,7 +721,7 @@ public class RegistrarClienteGUIver2ArrayList {
 	public void consultaInicioCantones(DefaultComboBoxModel<String> cantonesModel) {
 
 		String query = "SELECT * FROM lugar_geo ORDER BY descripcionLugGeo";
-		String queryProvincias = "SELECT lugar_geo.codigoLugGeo FROM lugar_geo WHERE lugar_geo.descripcionLugGeo='" + elementoSeleccionadoProvincia + "'";
+		String queryProvincias = "SELECT lugar_geo.codigoLugGeo FROM lugar_geo WHERE lugar_geo.descripcionLugGeo='" + elementoSeleccionadoProvincia + "' AND LENGTH(lugar_geo.codigoLugGeo)=2";
 		String codigoLugGeoQryProvincias = ""; //Necesarias para realizar el siguente query, y modelar la tabla
 
 		java.sql.ResultSet result = cnxCliente.consulta(query);
@@ -774,7 +774,7 @@ public class RegistrarClienteGUIver2ArrayList {
 	public void consultaInicioParroquias(DefaultComboBoxModel<String> parroquiasModel) {
 
 		String query = "SELECT * FROM lugar_geo ORDER BY descripcionLugGeo";
-		String queryCantones = "SELECT lugar_geo.codigoLugGeo FROM lugar_geo WHERE lugar_geo.descripcionLugGeo='" + elementoSeleccionadoCanton + "'";
+		String queryCantones = "SELECT lugar_geo.codigoLugGeo FROM lugar_geo WHERE lugar_geo.descripcionLugGeo='" + elementoSeleccionadoCanton + "' AND LENGTH(lugar_geo.codigoLugGeo)=6";
 		String codigoLugGeoQryCantones = "";
 
 		java.sql.ResultSet result = cnxCliente.consulta(query);

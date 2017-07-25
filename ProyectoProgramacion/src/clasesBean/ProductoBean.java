@@ -5,10 +5,10 @@ public class ProductoBean {
 	private String codigoPro;
 	private String descripcionPro;
 	
-	private long comprometidoPro;
-	private long saldoPro;
-	private long idProducto;
-	private long idTipoProducto; //FK
+	private int comprometidoPro;
+	private int saldoPro;
+	private int idProducto;
+	private int idTipoProducto; //FK
 	
 	private double precioUnitPro;
 	
@@ -20,7 +20,7 @@ public class ProductoBean {
 		this.codigoPro = codigoPro;
 	}
 	
-	public long getComprometidoPro() {
+	public int getComprometidoPro() {
 		return comprometidoPro;
 	}
 	
@@ -44,7 +44,7 @@ public class ProductoBean {
 		this.precioUnitPro = precioUnitPro;
 	}
 	
-	public long getSaldoPro() {
+	public int getSaldoPro() {
 		return saldoPro;
 	}
 	
@@ -52,7 +52,7 @@ public class ProductoBean {
 		this.saldoPro = saldoPro;
 	}
 	
-	public long getIdProducto() {
+	public int getIdProducto() {
 		return idProducto;
 	}
 	
@@ -60,7 +60,7 @@ public class ProductoBean {
 		this.idProducto = idProducto;
 	}
 	
-	public long getIdTipoProducto() {
+	public int getIdTipoProducto() {
 		return idTipoProducto;
 	}
 	

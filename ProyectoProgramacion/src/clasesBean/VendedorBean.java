@@ -3,7 +3,7 @@ package clasesBean;
 public class VendedorBean extends PersonaBean {
 	
 	private String codigoVendedor;
-	private long idVendedor;
+	private int idVendedor;
 	
 	public String getCodigoVendedor() {
 		return codigoVendedor;
@@ -11,7 +11,7 @@ public class VendedorBean extends PersonaBean {
 	public void setCodigoVendedor(String codigoVendedor) {
 		this.codigoVendedor = codigoVendedor;
 	}
-	public long getIdVendedor() {
+	public int getIdVendedor() {
 		return idVendedor;
 	}
 	public void setIdVendedor(int idVendedor) {

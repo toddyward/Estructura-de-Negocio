@@ -2,16 +2,16 @@ package clasesBean;
 
 public class Det_PedidoBean {
 	
-	private long idDetPedido; //PK
+	private int idDetPedido; //PK
 	
 	private double precioVtaDetPed;
-	private long cantidadDetPed; 
+	private int cantidadDetPed; 
 	
-	private long idCabPedido; //FK
-	private long idProducto; //FK
+	private int idCabPedido; //FK
+	private int idProducto; //FK
 
 	
-	public long getCantidadDetPed() {
+	public int getCantidadDetPed() {
 		return cantidadDetPed;
 	}
 	
@@ -23,11 +23,11 @@ public class Det_PedidoBean {
 		return precioVtaDetPed;
 	}
 	
-	public void setPrecioVtaDetPed(int precioVtaDetPed) {
+	public void setPrecioVtaDetPed(double precioVtaDetPed) {
 		this.precioVtaDetPed = precioVtaDetPed;
 	}
 	
-	public long getIdDetPed() {
+	public int getIdDetPed() {
 		return idCabPedido;
 	}
 	
@@ -35,7 +35,7 @@ public class Det_PedidoBean {
 		this.idCabPedido = idDetPed;
 	}
 	
-	public long getIdProducto() {
+	public int getIdProducto() {
 		return idProducto;
 	}
 	
@@ -43,12 +43,20 @@ public class Det_PedidoBean {
 		this.idProducto = idProducto;
 	}
 	
-	public long getIdCabPedido() {
+	public int getIdCabPedido() {
 		return idCabPedido;
 	}
 	
 	public void setIdCabPedido(int idCabPedido) {
 		this.idCabPedido = idCabPedido;
+	}
+
+	public int getIdDetPedido() {
+		return idDetPedido;
+	}
+
+	public void setIdDetPedido(int idDetPedido) {
+		this.idDetPedido = idDetPedido;
 	}
 	
 }

@@ -12,10 +12,10 @@ public class Cap_PedidoBean {
 	
 	private Date fechaPed;
 	
-	private long idCabPedido;
-	private long idVendedor;
-	private long idCliente;
-	private long idTipoCobro;
+	private int idCabPedido;
+	private int idVendedor;
+	private int idCliente;
+	private int idTipoCobro;
 
 	public String getEstadoPed() {
 		return estadoPed;
@@ -49,7 +49,7 @@ public class Cap_PedidoBean {
 		this.numeroPed = numeroPed;
 	}
 	
-	public long getIdCabPedido() {
+	public int getIdCabPedido() {
 		return idCabPedido;
 	}
 	
@@ -57,7 +57,7 @@ public class Cap_PedidoBean {
 		this.idCabPedido = idCabPedido;
 	}
 	
-	public long getIdVendedor() {
+	public int getIdVendedor() {
 		return idVendedor;
 	}
 	
@@ -65,7 +65,7 @@ public class Cap_PedidoBean {
 		this.idVendedor = idVendedor;
 	}
 	
-	public long getIdCliente() {
+	public int getIdCliente() {
 		return idCliente;
 	}
 	
@@ -73,7 +73,7 @@ public class Cap_PedidoBean {
 		this.idCliente = idCliente;
 	}
 	
-	public long getIdTipoCobro() {
+	public int getIdTipoCobro() {
 		return idTipoCobro;
 	}
 	

@@ -4,7 +4,7 @@ public class Tipo_CobroBean {
 	
 	private String descripcionTipCob;
 	
-	private long idTipoCobro;
+	private int idTipoCobro;
 	
 	public String getDescripcionTipCob() {
 		return descripcionTipCob;
@@ -14,7 +14,7 @@ public class Tipo_CobroBean {
 		this.descripcionTipCob = descripcionTipCob;
 	}
 	
-	public long getIdTipoCobro() {
+	public int getIdTipoCobro() {
 		return idTipoCobro;
 	}
 	

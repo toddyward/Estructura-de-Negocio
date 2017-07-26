@@ -11,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
 import mysql.ConexionMySql;
 import clasesBean.*;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class RegistrarPedidoGUI {
@@ -21,7 +22,7 @@ public class RegistrarPedidoGUI {
 	JPanel panel2;
 	JPanel panel3;
 	JPanel panel4;
-	
+
 	JLabel idCabeceraPedido;
 	JLabel idCliente;
 	JLabel idVendedor;
@@ -49,7 +50,7 @@ public class RegistrarPedidoGUI {
 	JTextField cantidadTxt;
 	JTextField precioVentaTxt;
 	JTextField saldoTxt;
-	
+
 	JComboBox<String> clienteBox;
 	JComboBox<String> vendedorBox;
 	JComboBox<String> tipoProductoBox;
@@ -82,7 +83,9 @@ public class RegistrarPedidoGUI {
 	Tipo_ProductoBean objTipoProducto = new Tipo_ProductoBean();
 	ProductoBean objProducto = new ProductoBean();
 	Det_PedidoBean objDetPedido = new Det_PedidoBean();
-	
+
+	ArrayList<Det_PedidoBean> listObjDetPed = new ArrayList<Det_PedidoBean>();
+
 	private int intSaldo = 0;
 	private int intComprometido = 0;
 
@@ -374,12 +377,24 @@ public class RegistrarPedidoGUI {
 
 		objCabPedidoBean.setNumeroPed(numPedidoTxt.getText());
 
-
-		String insertarNumPed = "INSERT INTO ventas2017a.cab_pedido (estadoPed, fechaPed, numeroFacturaPed, numeroPed, idTipoCobro, idCliente, idVendedor) VALUES ('" + objCabPedidoBean.getEstadoPed() + "', CURDATE(), '', '" + objCabPedidoBean.getNumeroPed() + "', '" + objCobro.getIdTipoCobro() + "', '" + objCliente.getIdCliente() + "', '" + objVendedor.getIdVendedor() + "')";
+		String insertarNumPed = "INSERT INTO ventas2017a.cab_pedido (estadoPed, fechaPed, numeroFacturaPed, numeroPed, idTipoCobro, idCliente, idVendedor) VALUES ('" + objCabPedidoBean.getEstadoPed() + "', CURDATE(), '', '" + objCabPedidoBean.getNumeroPed() + "', '" + objCabPedidoBean.getIdTipoCobro() + "', '" + objCabPedidoBean.getIdCliente() + "', '" + objCabPedidoBean.getIdVendedor() + "')";
 		System.out.println("Insertar cabecera: " + insertarNumPed);
 
 		conexion.insertar(insertarNumPed);
 
+	}
+	
+	public void insertarDetPedido() {
+		
+		objCabPedidoBean.setIdCabPedido(Integer.parseInt(idCabeceraPedidoTxt.getText()));
+		
+		for(int i = 0 ; i < listObjDetPed.size() ; i++) {
+		
+		String insertarDetPedido = "INSERT INTO ventas2017a.det_pedido (cantidadDetPed, precioVenDetPed, idCabPedido, idProducto) VALUES ('" + listObjDetPed.get(i).getCantidadDetPed() +"', '" + listObjDetPed.get(i).getPrecioVtaDetPed() + "', '" + idCabeceraPedidoTxt.getText() + "', '" + listObjDetPed.get(i).getIdProducto() + "')";
+		System.out.println("Insertar Detalle Pedido: " + insertarDetPedido);
+		
+		conexion.insertar(insertarDetPedido);
+		}
 	}
 
 	public void modelarTabla(DefaultTableModel modelo) {
@@ -395,26 +410,26 @@ public class RegistrarPedidoGUI {
 	}
 
 	public void consultarSaldo(String productoSeleccionado) {
-		
+
 		String query = "SELECT saldoPro FROM producto WHERE descripcionPro='" + productoSeleccionado + "'";
 		java.sql.ResultSet result = conexion.consulta(query);
 		System.out.println("Saldo: " + query);
-		
+
 		try {
-			
+
 			result.next();
 			objProducto.setSaldoPro(result.getInt("saldoPro"));
-			
+
 		}catch(SQLException error) {
-			
+
 			System.out.println(error);
-			
+
 		}
-		
+
 		intSaldo = objProducto.getSaldoPro() - intComprometido;
 		System.out.println("Saldo: " + intSaldo);
 		saldoTxt.setText(Integer.toString(intSaldo));
-		
+
 	}
 
 	public void showGUI() {
@@ -566,11 +581,11 @@ public class RegistrarPedidoGUI {
 		idProductoTxt.setEnabled(false);
 		constraintsPanel2.gridx++;
 		panel2.add(idProductoTxt, constraintsPanel2);
-		
+
 		saldo = new JLabel("Saldo");
 		constraintsPanel2.gridx++;
 		panel2.add(saldo, constraintsPanel2);
-		
+
 		saldoTxt = new JTextField();
 		saldoTxt.setPreferredSize(TxtDimen);
 		saldoTxt.setEnabled(false);
@@ -647,12 +662,12 @@ public class RegistrarPedidoGUI {
 		panel4.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		panel4.setLayout(new GridLayout(1, 2));
 		panel3.add(panel4);
-		
+
 		guardar = new JButton("Guardar");
 		guardar.addActionListener(new ButtonClickListener());
 		guardar.setActionCommand("guardar");
 		panel4.add(guardar);
-		
+
 		cancelar = new JButton("Cancelar");
 		cancelar.addActionListener(new ButtonClickListener());
 		cancelar.setActionCommand("cancelar");
@@ -684,23 +699,22 @@ public class RegistrarPedidoGUI {
 			if(command.equals("productoSeleccionado")) {
 
 				try {
-					
+
 					consultarIDproducto(productoBox.getSelectedItem().toString());
-				
+
 				}catch(NullPointerException error) {
-					
+
 					System.out.println(error);
-					
+
 				}
 
 			}
 
 			if(command.equals("aceptarCab")) {
-				obtenerUltimoNumPed();
 
 				if(!idClienteTxt.getText().equals("")) {
 
-					objCliente.setIdCliente(Integer.parseInt(idClienteTxt.getText()));
+					objCabPedidoBean.setIdCliente(Integer.parseInt(idClienteTxt.getText()));
 
 				}
 				else {
@@ -711,7 +725,7 @@ public class RegistrarPedidoGUI {
 
 				if(!idVendedorTxt.getText().equals("")) {
 
-					objVendedor.setIdVendedor(Integer.parseInt(idVendedorTxt.getText()));
+					objCabPedidoBean.setIdVendedor(Integer.parseInt(idVendedorTxt.getText()));
 
 				}
 				else {
@@ -720,18 +734,38 @@ public class RegistrarPedidoGUI {
 
 				}
 
-				if(!idTipoCobro.getText().equals("")) {
+				if(!idTipoCobroTxt.getText().equals("")) {
 
-					objCobro.setIdTipoCobro(Integer.parseInt(idTipoCobroTxt.getText()));
+					objCabPedidoBean.setIdTipoCobro(Integer.parseInt(idTipoCobroTxt.getText()));
 
 				}
 				else {
 
 					valido = false;
+
+				}
+
+				if(!estadoTxt.getText().equals("") && (estadoTxt.getText().equals("P") || estadoTxt.getText().equals("V"))) {
+
+					objCabPedidoBean.setEstadoPed(estadoTxt.getText());
+
+				}
+				else {
+
+					valido = false;
+
+				}
+
+				if(valido) {
+
+					estadoTxt.setEnabled(false);
+					clienteBox.setEnabled(false);
+					vendedorBox.setEnabled(false);
+					tipoCobroBox.setEnabled(false);
+					cancelarCab.setEnabled(false);
 					aceptarCab.setEnabled(false);
 
 				}
-
 
 
 			}
@@ -740,7 +774,7 @@ public class RegistrarPedidoGUI {
 
 				if(!idProductoTxt.getText().equals("")) {
 
-					objProducto.setIdProducto(Integer.parseInt(idProductoTxt.getText()));
+					objDetPedido.setIdProducto(Integer.parseInt(idProductoTxt.getText()));
 
 				}
 				else {
@@ -772,21 +806,21 @@ public class RegistrarPedidoGUI {
 				}
 
 				if(!cantidadTxt.getText().equals("")) {
-					
+
 					objDetPedido.setCantidadDetPed(Integer.parseInt(cantidadTxt.getText()));
 					intComprometido = objDetPedido.getCantidadDetPed();
 					intSaldo -= intComprometido;
 					saldoTxt.setText(Integer.toString(intSaldo));
 					System.out.println("Saldo: " + intSaldo);
-					
+
 					if(intSaldo < 0) {
-						
+
 						intSaldo += intComprometido;
 						JOptionPane.showMessageDialog(mainFrame, "Exedio el saldo permitido", "Saldo Exedido", 3);
 						valido = false;
-						
+
 					}
-						
+
 
 				}
 				else {
@@ -808,10 +842,23 @@ public class RegistrarPedidoGUI {
 
 				if(valido) {
 
-					modelo.addRow(new Object[] {objProducto.getIdProducto(), objTipoProducto.getDescripcionTipPro(), objProducto.getDescripcionPro(), objDetPedido.getCantidadDetPed(), objDetPedido.getPrecioVtaDetPed()});
+					listObjDetPed.add(objDetPedido);
+					modelo.addRow(new Object[] {objDetPedido.getIdProducto(), objTipoProducto.getDescripcionTipPro(), objProducto.getDescripcionPro(), objDetPedido.getCantidadDetPed(), objDetPedido.getPrecioVtaDetPed()});
+					tabla.removeAll();
+					tabla.setModel(modelo);
 					cantidadTxt.setText("");
 					idProductoTxt.setText("");
 
+				}
+			}
+
+			if(command.equals("guardar")) {
+
+				if(!aceptarCab.isEnabled()) {
+					obtenerUltimoNumPed();
+					insertarUltimoNumPed();
+					consultarIDCabPedido();
+					insertarDetPedido();
 				}
 			}
 

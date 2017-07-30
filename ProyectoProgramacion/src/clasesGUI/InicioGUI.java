@@ -15,6 +15,7 @@ public class InicioGUI {
 	private JMenuItem registrarClienteItm;
 	private JMenuItem registrarCliente2Itm;
 	private JMenuItem registrarLugarGeograficoItm;
+	private JMenuItem registrarPedidoItm;
 
 	public InicioGUI() {
 
@@ -52,6 +53,11 @@ public class InicioGUI {
 		registrarLugarGeograficoItm.addActionListener(new ButtonClickListener());
 		registrarLugarGeograficoItm.setActionCommand("registrarLugarGeograficoItm");
 		menu.add(registrarLugarGeograficoItm);
+		
+		registrarPedidoItm = new JMenuItem("Registrar Pedido");
+		registrarPedidoItm.addActionListener(new ButtonClickListener());
+		registrarPedidoItm.setActionCommand("registrarPedido");
+		menu.add(registrarPedidoItm);
 
 		mainFrame.setVisible(true);
 
@@ -71,6 +77,9 @@ public class InicioGUI {
 
 			else if(command.equals("registrarLugarGeograficoItm"))
 				new RegistrarLugarGeograficoGUI();
+			
+			else if(command.equals("registrarPedido"))
+				new RegistrarPedidoGUI();
 
 		}
 

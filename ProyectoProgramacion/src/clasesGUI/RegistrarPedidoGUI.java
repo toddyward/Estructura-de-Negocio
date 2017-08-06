@@ -90,14 +90,12 @@ public class RegistrarPedidoGUI {
 	private Cap_PedidoBean objCabPedidoBean = new Cap_PedidoBean();
 	private Tipo_ProductoBean objTipoProducto = new Tipo_ProductoBean();
 	private ProductoBean objProducto = new ProductoBean();
-	private ProductoBean objProducto2 = new ProductoBean();
 	private Det_PedidoBean objDetPedido = new Det_PedidoBean();
 	//ClienteBean objCliente = new ClienteBean();
 	//VendedorBean objVendedor = new VendedorBean();
 	//Tipo_CobroBean objCobro = new Tipo_CobroBean();
 
 	private ArrayList<Det_PedidoBean> listObjDetPed = new ArrayList<Det_PedidoBean>();
-	private ArrayList<ProductoBean> listObjDisponiblePro = new ArrayList<ProductoBean>();
 	private HashMap <Integer, Integer> hmSaldoPro = new HashMap<Integer, Integer>();
 	private HashMap <Integer, Integer> hmComprometidoPro = new HashMap<Integer, Integer>();
 
@@ -365,12 +363,12 @@ public class RegistrarPedidoGUI {
 
 		idProductoTxt.setText(Integer.toString(objProducto.getIdProducto()));
 		consultarPrecio(productoSeleccionado);
-		
+
 		saldo = hmSaldoPro.get(Integer.parseInt(idProductoTxt.getText()));
 		comprometido = hmComprometidoPro.get(Integer.parseInt(idProductoTxt.getText()));
-		
+
 		disponibleTxt.setText(Integer.toString(saldo - comprometido));
-		
+
 
 
 	}
@@ -982,15 +980,15 @@ public class RegistrarPedidoGUI {
 					valido = false;
 
 				}
-				
+
 				int comprometidoTmp = hmComprometidoPro.get(Integer.parseInt(idProductoTxt.getText()));
 				comprometidoTmp = comprometidoTmp + objDetPedido.getCantidadDetPed();
-				
+
 				if(comprometidoTmp > saldo) {
-					
+
 					valido = false;
 					JOptionPane.showMessageDialog(mainFrame, "Ha exedido el saldo Disponible", "Atencion", 3);				
-					
+
 				}
 
 				if(valido) {
@@ -1001,13 +999,12 @@ public class RegistrarPedidoGUI {
 					tabla.removeAll();
 					tabla.setModel(modelo);
 					
-					
 					disponibleTxt.setText(Integer.toString(saldo - comprometidoTmp));
 					productoBox.setSelectedIndex(0);
 					tipoProductoBox.setSelectedIndex(0);
 					cantidadTxt.setText("");
 					idProductoTxt.setText("");
-					
+
 				}
 			}
 

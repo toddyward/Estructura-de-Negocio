@@ -1,93 +1,107 @@
 package clasesGUI;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.sql.SQLException;
+import java.text.*;
 
 import javax.swing.*;
+import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.table.DefaultTableModel;
+
+import org.jdatepicker.impl.*;
+
+import com.jaspersoft.ireport.designer.undo.ObjectPropertyUndoableEdit;
 
 import mysql.ConexionMySql;
 import clasesBean.*;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Properties;
 
 public class RegistrarPedidoGUI {
 
 	JFrame mainFrame;
 
-	JPanel panel1;
-	JPanel panel2;
-	JPanel panel3;
-	JPanel panel4;
+	private JPanel panel1;
+	private JPanel panel2;
+	private JPanel panel3;
+	private JPanel panel4;
+	private JPanel panelIDCab;
+	private JPanel panelElementosCab;
+	private JPanel panelIDDet;
+	private JPanel panelElementosDet;
 
-	JLabel idCabeceraPedido;
-	JLabel idCliente;
-	JLabel idVendedor;
-	JLabel idTipoCobro;
-	JLabel numPedido;
-	JLabel estado;
-	JLabel fechaPedido;
-	JLabel cliente;
-	JLabel vendedor;
-	JLabel idProducto;
-	JLabel tipoProducto;
-	JLabel producto;
-	JLabel cantidad;
-	JLabel precioVenta;
-	JLabel tipoCobro; 
-	JLabel saldo;
+	private JLabel idCabeceraPedido;
+	private JLabel idCliente;
+	private JLabel idVendedor;
+	//private JLabel idTipoCobro;
+	private JLabel numPedido;
+	private JLabel estado;
+	private JLabel fechaPedido;
+	private JLabel cliente;
+	private JLabel vendedor;
+	private JLabel idProducto;
+	private JLabel tipoProducto;
+	private JLabel producto;
+	private JLabel cantidad;
+	private JLabel precioVenta;
+	//private JLabel tipoCobro; 
+	private JLabel disponible;
 
-	JTextField idCabeceraPedidoTxt;
-	JTextField idClienteTxt;
-	JTextField idVendedorTxt;
-	JTextField idTipoCobroTxt;
-	JTextField numPedidoTxt;
-	JTextField estadoTxt;
-	JTextField idProductoTxt;
-	JTextField cantidadTxt;
-	JTextField precioVentaTxt;
-	JTextField saldoTxt;
+	private JTextField idCabeceraPedidoTxt;
+	private JTextField idClienteTxt;
+	private JTextField idVendedorTxt;
+	//private JTextField idTipoCobroTxt;
+	private JTextField numPedidoTxt;
+	private JTextField estadoTxt;
+	private JTextField idProductoTxt;
+	private JTextField cantidadTxt;
+	private JTextField precioVentaTxt;
+	private JTextField disponibleTxt;
 
-	JComboBox<String> clienteBox;
-	JComboBox<String> vendedorBox;
-	JComboBox<String> tipoProductoBox;
-	JComboBox<String> productoBox;
-	JComboBox<String> tipoCobroBox;
+	private JComboBox<String> clienteBox;
+	private JComboBox<String> vendedorBox;
+	private JComboBox<String> tipoProductoBox;
+	private JComboBox<String> productoBox;
+	//private JComboBox<String> tipoCobroBox;
 
-	JButton aceptarCab;
-	JButton cancelarCab;
-	JButton aceptarDet;
-	JButton cancelarDet;
-	JButton guardar;
-	JButton cancelar;
+	private JButton aceptarCab;
+	private JButton cancelarCab;
+	private JButton aceptarDet;
+	private JButton cancelarDet;
+	private JButton guardar;
+	private JButton cancelar;
 
-	JTable tabla;
-	JScrollPane tablaScrl;
+	private JTable tabla;
+	private JScrollPane tablaScrl;
 
-	DefaultTableModel modelo;
-	DefaultComboBoxModel<String> modeloClienteBox;
-	DefaultComboBoxModel<String> modeloVendedorBox;
-	DefaultComboBoxModel<String> modeloCobroBox;
-	DefaultComboBoxModel<String> modelotipoProductoBox;
-	DefaultComboBoxModel<String> modeloProductoBox;
+	private DefaultTableModel modelo;
+	private DefaultComboBoxModel<String> modeloClienteBox;
+	private DefaultComboBoxModel<String> modeloVendedorBox;
+	//private DefaultComboBoxModel<String> modeloCobroBox;
+	private DefaultComboBoxModel<String> modelotipoProductoBox;
+	private DefaultComboBoxModel<String> modeloProductoBox;
 
-	ConexionMySql conexion = new ConexionMySql();
-	PersonaBean objPersona = new PersonaBean();
-	ClienteBean objCliente = new ClienteBean();
-	VendedorBean objVendedor = new VendedorBean();
-	Cap_PedidoBean objCabPedidoBean = new Cap_PedidoBean();
-	Tipo_CobroBean objCobro = new Tipo_CobroBean();
-	Tipo_ProductoBean objTipoProducto = new Tipo_ProductoBean();
-	ProductoBean objProducto = new ProductoBean();
-	Det_PedidoBean objDetPedido = new Det_PedidoBean();
+	private ConexionMySql conexion = new ConexionMySql();
+	private PersonaBean objPersona = new PersonaBean();
+	private Cap_PedidoBean objCabPedidoBean = new Cap_PedidoBean();
+	private Tipo_ProductoBean objTipoProducto = new Tipo_ProductoBean();
+	private ProductoBean objProducto = new ProductoBean();
+	private ProductoBean objProducto2 = new ProductoBean();
+	private Det_PedidoBean objDetPedido = new Det_PedidoBean();
+	//ClienteBean objCliente = new ClienteBean();
+	//VendedorBean objVendedor = new VendedorBean();
+	//Tipo_CobroBean objCobro = new Tipo_CobroBean();
 
-	ArrayList<Det_PedidoBean> listObjDetPed = new ArrayList<Det_PedidoBean>();
+	private ArrayList<Det_PedidoBean> listObjDetPed = new ArrayList<Det_PedidoBean>();
+	private ArrayList<ProductoBean> listObjDisponiblePro = new ArrayList<ProductoBean>();
+	private HashMap <Integer, Integer> hmSaldoPro = new HashMap<Integer, Integer>();
+	private HashMap <Integer, Integer> hmComprometidoPro = new HashMap<Integer, Integer>();
 
-	private int intSaldo = 0;
-	private int intComprometido = 0;
+	private int saldo, comprometido;
 
 	public RegistrarPedidoGUI() {
 
@@ -100,6 +114,8 @@ public class RegistrarPedidoGUI {
 		String query = "SELECT persona.nombrePer FROM persona, cliente WHERE persona.idPersona=cliente.idPersona";
 		java.sql.ResultSet result = conexion.consulta(query);
 		System.out.println("Clientes: " + query);
+
+		modeloClienteBox.addElement("Elija una opcion ...");
 
 		try {
 
@@ -126,6 +142,8 @@ public class RegistrarPedidoGUI {
 		java.sql.ResultSet result = conexion.consulta(query);
 		System.out.println("Vendedores: " + query);
 
+		modeloVendedorBox.addElement("Elija una opcion ...");
+
 		try {
 
 			while(result.next()) {
@@ -145,7 +163,7 @@ public class RegistrarPedidoGUI {
 
 	}
 
-	public void consultarCobro(DefaultComboBoxModel<String> modeloCobroBox) {
+	/*public void consultarCobro(DefaultComboBoxModel<String> modeloCobroBox) {
 
 		String query = "SELECT descripcionTipCob FROM tipo_cobro";
 		java.sql.ResultSet result = conexion.consulta(query);
@@ -168,13 +186,15 @@ public class RegistrarPedidoGUI {
 
 		tipoCobroBox.setModel(modeloCobroBox);
 
-	}
+	}*/
 
 	public void consultarTipoProducto(DefaultComboBoxModel<String> modeloTipoProductoBox) {
 
 		String query = "SELECT descripcionTipPro FROM  tipo_producto";
 		java.sql.ResultSet result = conexion.consulta(query);
 		System.out.println("Tipo Producto: " + query);
+
+		modeloTipoProductoBox.addElement("Elija una opcion ...");
 
 		try {
 
@@ -201,6 +221,7 @@ public class RegistrarPedidoGUI {
 		System.out.println("Producto: " + query);
 
 		modeloProductoBox.removeAllElements();
+		modeloProductoBox.addElement("Elija una opccion ...");
 
 		try {
 
@@ -250,7 +271,7 @@ public class RegistrarPedidoGUI {
 		try {
 
 			result.next();
-			objCliente.setIdCliente(result.getInt("idCliente"));
+			objCabPedidoBean.setIdCliente(result.getInt("idCliente"));
 
 		}catch(SQLException error) {
 
@@ -258,7 +279,7 @@ public class RegistrarPedidoGUI {
 
 		}
 
-		idClienteTxt.setText(Integer.toString(objCliente.getIdCliente()));
+		idClienteTxt.setText(Integer.toString(objCabPedidoBean.getIdCliente()));
 
 	}
 
@@ -271,7 +292,7 @@ public class RegistrarPedidoGUI {
 		try {
 
 			result.next();
-			objVendedor.setIdVendedor(result.getInt("idVendedor"));
+			objCabPedidoBean.setIdVendedor(result.getInt("idVendedor"));
 
 		}catch(SQLException error) {
 
@@ -279,11 +300,11 @@ public class RegistrarPedidoGUI {
 
 		}
 
-		idVendedorTxt.setText(Integer.toString(objVendedor.getIdVendedor()));
+		idVendedorTxt.setText(Integer.toString(objCabPedidoBean.getIdVendedor()));
 
 	}
 
-	public void consultarIDCobro(String cobroSeleccionado) {
+	/*public void consultarIDCobro(String cobroSeleccionado) {
 
 		String query = "SELECT idTipoCobro FROM tipo_cobro WHERE descripcionTipCob='" + cobroSeleccionado + "'";
 		java.sql.ResultSet result = conexion.consulta(query);
@@ -302,7 +323,7 @@ public class RegistrarPedidoGUI {
 
 		idTipoCobroTxt.setText(Integer.toString(objCobro.getIdTipoCobro()));
 
-	}
+	}*/
 
 	public void consultarIDCabPedido() {
 
@@ -344,7 +365,40 @@ public class RegistrarPedidoGUI {
 
 		idProductoTxt.setText(Integer.toString(objProducto.getIdProducto()));
 		consultarPrecio(productoSeleccionado);
-		consultarSaldo(productoSeleccionado);
+		
+		saldo = hmSaldoPro.get(Integer.parseInt(idProductoTxt.getText()));
+		comprometido = hmComprometidoPro.get(Integer.parseInt(idProductoTxt.getText()));
+		
+		disponibleTxt.setText(Integer.toString(saldo - comprometido));
+		
+
+
+	}
+
+	public void consultarDisponible() {
+
+		String query = "SELECT producto.idProducto, producto.saldoPro, producto.comprometidoPro FROM producto";
+		java.sql.ResultSet result = conexion.consulta(query);
+		System.out.println("Disponible: " + query);
+
+		try {
+
+			while(result.next()) {
+
+				objProducto.setIdProducto(result.getInt("idProducto"));
+				objProducto.setSaldoPro(result.getInt("saldoPro"));
+				objProducto.setComprometidoPro(result.getInt("comprometidoPro"));
+
+				hmSaldoPro.put(objProducto.getIdProducto(), objProducto.getSaldoPro());
+				hmComprometidoPro.put(objProducto.getIdProducto(), objProducto.getComprometidoPro());
+				
+			}
+
+		}catch(SQLException error) {
+
+			System.out.println(error);
+
+		}
 
 	}
 
@@ -377,23 +431,23 @@ public class RegistrarPedidoGUI {
 
 		objCabPedidoBean.setNumeroPed(numPedidoTxt.getText());
 
-		String insertarNumPed = "INSERT INTO ventas2017a.cab_pedido (estadoPed, fechaPed, numeroFacturaPed, numeroPed, idTipoCobro, idCliente, idVendedor) VALUES ('" + objCabPedidoBean.getEstadoPed() + "', CURDATE(), '', '" + objCabPedidoBean.getNumeroPed() + "', '" + objCabPedidoBean.getIdTipoCobro() + "', '" + objCabPedidoBean.getIdCliente() + "', '" + objCabPedidoBean.getIdVendedor() + "')";
+		String insertarNumPed = "INSERT INTO ventas2017a.cab_pedido (estadoPed, fechaPed, numeroFacturaPed, numeroPed, idCliente, idVendedor) VALUES ('" + objCabPedidoBean.getEstadoPed() + "', CURDATE(), '', '" + objCabPedidoBean.getNumeroPed() + "', '" + objCabPedidoBean.getIdCliente() + "', '" + objCabPedidoBean.getIdVendedor() + "')";
 		System.out.println("Insertar cabecera: " + insertarNumPed);
 
 		conexion.insertar(insertarNumPed);
 
 	}
-	
+
 	public void insertarDetPedido() {
-		
+
 		objCabPedidoBean.setIdCabPedido(Integer.parseInt(idCabeceraPedidoTxt.getText()));
-		
+
 		for(int i = 0 ; i < listObjDetPed.size() ; i++) {
-		
-		String insertarDetPedido = "INSERT INTO ventas2017a.det_pedido (cantidadDetPed, precioVenDetPed, idCabPedido, idProducto) VALUES ('" + listObjDetPed.get(i).getCantidadDetPed() +"', '" + listObjDetPed.get(i).getPrecioVtaDetPed() + "', '" + idCabeceraPedidoTxt.getText() + "', '" + listObjDetPed.get(i).getIdProducto() + "')";
-		System.out.println("Insertar Detalle Pedido: " + insertarDetPedido);
-		
-		conexion.insertar(insertarDetPedido);
+
+			String insertarDetPedido = "INSERT INTO ventas2017a.det_pedido (cantidadDetPed, precioVenDetPed, idCabPedido, idProducto) VALUES ('" + listObjDetPed.get(i).getCantidadDetPed() +"', '" + listObjDetPed.get(i).getPrecioVtaDetPed() + "', '" + idCabeceraPedidoTxt.getText() + "', '" + listObjDetPed.get(i).getIdProducto() + "')";
+			System.out.println("Insertar Detalle Pedido: " + insertarDetPedido);
+
+			conexion.insertar(insertarDetPedido);
 		}
 	}
 
@@ -426,17 +480,40 @@ public class RegistrarPedidoGUI {
 
 		}
 
-		intSaldo = objProducto.getSaldoPro() - intComprometido;
-		System.out.println("Saldo: " + intSaldo);
-		saldoTxt.setText(Integer.toString(intSaldo));
+	}
+
+	public class DateLabelFormatter extends AbstractFormatter {
+
+		private String datePattern = "yyyy/MM/dd";
+		private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
+
+		public Object stringToValue(String text) throws ParseException {
+
+			return dateFormatter.parseObject(text);
+
+		}
+
+		public String valueToString(Object value) throws ParseException {
+
+			if (value != null) {
+
+				Calendar cal = (Calendar) value;
+				return dateFormatter.format(cal.getTime());
+
+			}
+
+			return "";
+
+		}
 
 	}
 
 	public void showGUI() {
 
 		mainFrame = new JFrame("Registrar Pedido");
-		mainFrame.setSize(800, 400);
+		mainFrame.setSize(800, 580);
 		mainFrame.setLayout(new GridLayout(3, 1));
+		mainFrame.setAlwaysOnTop(true);
 		centrarFrame(mainFrame);
 
 		panel1 = new JPanel();
@@ -449,38 +526,48 @@ public class RegistrarPedidoGUI {
 		Dimension idTxtDimen = new Dimension(50, 20);
 		Dimension TxtDimen = new Dimension(75, 20);
 
-		idCabeceraPedido = new JLabel("idCabPedido");
+		panelIDCab = new JPanel();
+		//panelIDCab.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+		panelIDCab.setLayout(new GridBagLayout());
 		constraintsPanel1.gridx = 0;
 		constraintsPanel1.gridy = 0;
-		panel1.add(idCabeceraPedido, constraintsPanel1);
+		panel1.add(panelIDCab, constraintsPanel1);
+
+		GridBagConstraints constraintsPanelIDCab = new GridBagConstraints();
+
+		idCabeceraPedido = new JLabel("idCabPedido");
+		constraintsPanelIDCab.gridx = 0;
+		constraintsPanelIDCab.gridy = 0;
+		constraintsPanelIDCab.insets = new Insets(0, 0, 0, 5);
+		panelIDCab.add(idCabeceraPedido, constraintsPanelIDCab);
 
 		idCabeceraPedidoTxt = new JTextField();
 		idCabeceraPedidoTxt.setPreferredSize(idTxtDimen);
 		idCabeceraPedidoTxt.setEnabled(false);
-		constraintsPanel1.gridx++;
-		panel1.add(idCabeceraPedidoTxt, constraintsPanel1);
+		constraintsPanelIDCab.gridx++;
+		panelIDCab.add(idCabeceraPedidoTxt, constraintsPanelIDCab);
 
 		idCliente = new JLabel("idCliente");
-		constraintsPanel1.gridx++;
-		panel1.add(idCliente, constraintsPanel1);
+		constraintsPanelIDCab.gridx++;
+		panelIDCab.add(idCliente, constraintsPanelIDCab);
 
 		idClienteTxt = new JTextField();
 		idClienteTxt.setPreferredSize(idTxtDimen);
 		idClienteTxt.setEnabled(false);
-		constraintsPanel1.gridx++;
-		panel1.add(idClienteTxt, constraintsPanel1);
+		constraintsPanelIDCab.gridx++;
+		panelIDCab.add(idClienteTxt, constraintsPanelIDCab);
 
 		idVendedor = new JLabel("idVendedor");
-		constraintsPanel1.gridx++;
-		panel1.add(idVendedor, constraintsPanel1);
+		constraintsPanelIDCab.gridx++;
+		panelIDCab.add(idVendedor, constraintsPanelIDCab);
 
 		idVendedorTxt = new JTextField();
 		idVendedorTxt.setPreferredSize(idTxtDimen);
 		idVendedorTxt.setEnabled(false);
-		constraintsPanel1.gridx++;
-		panel1.add(idVendedorTxt, constraintsPanel1);
+		constraintsPanelIDCab.gridx++;
+		panelIDCab.add(idVendedorTxt, constraintsPanelIDCab);
 
-		idTipoCobro = new JLabel("idTipoCobro");
+		/*idTipoCobro = new JLabel("idTipoCobro");
 		constraintsPanel1.gridx++;
 		panel1.add(idTipoCobro, constraintsPanel1);
 
@@ -488,58 +575,82 @@ public class RegistrarPedidoGUI {
 		idTipoCobroTxt.setPreferredSize(idTxtDimen);
 		idTipoCobroTxt.setEnabled(false);
 		constraintsPanel1.gridx++;
-		panel1.add(idTipoCobroTxt, constraintsPanel1);
+		panel1.add(idTipoCobroTxt, constraintsPanel1);*/
+
+		panelElementosCab = new JPanel();
+		//panelElemetosCab.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+		panelElementosCab.setLayout(new GridBagLayout());
+		constraintsPanel1.gridy++;
+		constraintsPanel1.insets = new Insets(15, 0, 0, 0);
+		panel1.add(panelElementosCab, constraintsPanel1);
+
+		GridBagConstraints constraintsPanelElementoCab = new GridBagConstraints();
+		constraintsPanelElementoCab.anchor  = GridBagConstraints.LINE_START;
 
 		numPedido = new JLabel("Numero de Pedido");
-		constraintsPanel1.gridx = 0;
-		constraintsPanel1.gridy++;
-		panel1.add(numPedido, constraintsPanel1);
+		constraintsPanelElementoCab.gridx = 0;
+		constraintsPanelElementoCab.gridy = 0;
+		constraintsPanelElementoCab.insets = new Insets(0, 0, 4, 7);
+		panelElementosCab.add(numPedido, constraintsPanelElementoCab);
 
 		numPedidoTxt = new JTextField();
 		numPedidoTxt.setPreferredSize(TxtDimen);
 		numPedidoTxt.setEnabled(false);
-		constraintsPanel1.gridx++;
-		panel1.add(numPedidoTxt, constraintsPanel1);
+		constraintsPanelElementoCab.gridx++;
+		panelElementosCab.add(numPedidoTxt, constraintsPanelElementoCab);
 
 		estado = new JLabel("Estado");
-		constraintsPanel1.gridx++;
-		panel1.add(estado, constraintsPanel1);
+		constraintsPanelElementoCab.gridx++;
+		panelElementosCab.add(estado, constraintsPanelElementoCab);
 
 		estadoTxt = new JTextField();
 		estadoTxt.setPreferredSize(TxtDimen);
-		constraintsPanel1.gridx++;
-		panel1.add(estadoTxt, constraintsPanel1);
+		constraintsPanelElementoCab.gridx++;
+		panelElementosCab.add(estadoTxt, constraintsPanelElementoCab);
 
 		fechaPedido = new JLabel("Fecha");
-		constraintsPanel1.gridx++;
-		panel1.add(fechaPedido, constraintsPanel1);
+		constraintsPanelElementoCab.gridx++;
+		panelElementosCab.add(fechaPedido, constraintsPanelElementoCab);
+
+		/*UtilDateModel model = new UtilDateModel();
+		Properties propierties = new Properties();
+		propierties.put("text.today", "Today");
+		propierties.put("text.month", "Month");
+		propierties.put("text.year", "Year");
+		JDatePanelImpl datePanel = new JDatePanelImpl(model, propierties);
+		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+		java.sql.Date selectedDate = (java.sql.Date) datePicker.getModel().getValue();
+
+		constraintsPanelElementoCab.gridx++;
+		panelElementosCab.add(datePicker, constraintsPanelElementoCab);*/
+
 
 		cliente = new JLabel("Cliente");
-		constraintsPanel1.gridx = 0;
-		constraintsPanel1.gridy++;
-		panel1.add(cliente, constraintsPanel1);
+		constraintsPanelElementoCab.gridx = 0;
+		constraintsPanelElementoCab.gridy++;
+		panelElementosCab.add(cliente, constraintsPanelElementoCab);
 
 		modeloClienteBox = new DefaultComboBoxModel<String>();
 		clienteBox = new JComboBox<String>();
 		consultarCliente(modeloClienteBox);
 		clienteBox.addActionListener(new ButtonClickListener());
 		clienteBox.setActionCommand("clienteSeleccionado");
-		constraintsPanel1.gridx++;
-		panel1.add(clienteBox, constraintsPanel1);
+		constraintsPanelElementoCab.gridx++;
+		panelElementosCab.add(clienteBox, constraintsPanelElementoCab);
 
 		vendedor = new JLabel("Vendedor");
-		constraintsPanel1.gridx++;
-		panel1.add(vendedor, constraintsPanel1);
+		constraintsPanelElementoCab.gridx++;
+		panelElementosCab.add(vendedor, constraintsPanelElementoCab);
 
 		modeloVendedorBox = new DefaultComboBoxModel<String>();
 		vendedorBox = new JComboBox<String>();
 		consultarVendedor(modeloVendedorBox);
 		vendedorBox.addActionListener(new ButtonClickListener());
 		vendedorBox.setActionCommand("vendedorSeleccionado");
-		constraintsPanel1.gridx++;
-		panel1.add(vendedorBox, constraintsPanel1);
+		constraintsPanelElementoCab.gridx++;
+		panelElementosCab.add(vendedorBox, constraintsPanelElementoCab);
 
-		tipoCobro = new JLabel("Cobro");
+		/*tipoCobro = new JLabel("Cobro");
 		constraintsPanel1.gridx++;
 		panel1.add(tipoCobro, constraintsPanel1);
 
@@ -549,18 +660,21 @@ public class RegistrarPedidoGUI {
 		tipoCobroBox.addActionListener(new ButtonClickListener());
 		tipoCobroBox.setActionCommand("tipoCobroSeleccionado");
 		constraintsPanel1.gridx++;
-		panel1.add(tipoCobroBox, constraintsPanel1);
+		panel1.add(tipoCobroBox, constraintsPanel1);*/
 
 		aceptarCab = new JButton("Aceptar");
 		aceptarCab.addActionListener(new ButtonClickListener());
 		aceptarCab.setActionCommand("aceptarCab");
-		constraintsPanel1.gridx = 0;
-		constraintsPanel1.gridy++;
-		panel1.add(aceptarCab, constraintsPanel1);
+		constraintsPanelElementoCab.gridx = 0;
+		constraintsPanelElementoCab.gridy++;
+		panelElementosCab.add(aceptarCab, constraintsPanelElementoCab);
 
 		cancelarCab = new JButton("Cancelar");
-		constraintsPanel1.gridx++;
-		panel1.add(cancelarCab, constraintsPanel1);
+		cancelarCab.addActionListener(new ButtonClickListener());
+		cancelarCab.setActionCommand("cancelarCab");
+		constraintsPanelElementoCab.gridx++;
+		constraintsPanelElementoCab.insets = new Insets(0, -48, 4, 7);
+		panelElementosCab.add(cancelarCab, constraintsPanelElementoCab);
 
 
 		panel2 = new JPanel();
@@ -570,80 +684,108 @@ public class RegistrarPedidoGUI {
 
 		GridBagConstraints constraintsPanel2 = new GridBagConstraints();
 		constraintsPanel2.anchor = GridBagConstraints.LINE_START;
+		constraintsPanel2.insets = new Insets(0, -120, 10, 0);
 
-		idProducto = new JLabel("idProducto");
+		panelIDDet = new JPanel();
+		//panelIDDet.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+		panelIDDet.setLayout(new GridBagLayout());
 		constraintsPanel2.gridx = 0;
 		constraintsPanel2.gridy = 0;
-		panel2.add(idProducto, constraintsPanel2);
+		panel2.add(panelIDDet, constraintsPanel2);
+
+		GridBagConstraints constraintsPanelIDDet = new GridBagConstraints();
+		constraintsPanelIDDet.anchor = GridBagConstraints.LINE_START;
+		constraintsPanelIDDet.insets = new Insets(0, 0, 0, 5);
+
+		idProducto = new JLabel("idProducto");
+		constraintsPanelIDDet.gridx = 0;
+		constraintsPanelIDDet.gridy = 0;
+		panelIDDet.add(idProducto, constraintsPanelIDDet);
 
 		idProductoTxt = new JTextField();
 		idProductoTxt.setPreferredSize(idTxtDimen);
 		idProductoTxt.setEnabled(false);
-		constraintsPanel2.gridx++;
-		panel2.add(idProductoTxt, constraintsPanel2);
+		constraintsPanelIDDet.gridx++;
+		panelIDDet.add(idProductoTxt, constraintsPanelIDDet);
 
-		saldo = new JLabel("Saldo");
-		constraintsPanel2.gridx++;
-		panel2.add(saldo, constraintsPanel2);
+		panelElementosDet = new JPanel();
+		//panelElementosDet.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+		panelElementosDet.setLayout(new GridBagLayout());
+		constraintsPanel2.gridy++;
+		panel2.add(panelElementosDet, constraintsPanel2);
 
-		saldoTxt = new JTextField();
-		saldoTxt.setPreferredSize(TxtDimen);
-		saldoTxt.setEnabled(false);
-		constraintsPanel2.gridx++;
-		panel2.add(saldoTxt, constraintsPanel2);
+		GridBagConstraints constraintsElementosDet = new GridBagConstraints();
+		constraintsElementosDet.anchor = GridBagConstraints.LINE_START;
+		constraintsElementosDet.insets = new Insets(0, 0, 4, 7);
+
+		disponible = new JLabel("Disponible");
+		constraintsElementosDet.gridx = 0;
+		constraintsElementosDet.gridy = 0;
+		panelElementosDet.add(disponible, constraintsElementosDet);
+
+		disponibleTxt = new JTextField();
+		disponibleTxt.setPreferredSize(TxtDimen);
+		disponibleTxt.setEnabled(false);
+		constraintsElementosDet.gridx++;
+		panelElementosDet.add(disponibleTxt, constraintsElementosDet);
 
 		tipoProducto = new JLabel("Tipo");
-		constraintsPanel2.gridx = 0;
-		constraintsPanel2.gridy++;
-		panel2.add(tipoProducto, constraintsPanel2);
+		constraintsElementosDet.gridx = 0;
+		constraintsElementosDet.gridy++;
+		panelElementosDet.add(tipoProducto, constraintsElementosDet);
 
 		modelotipoProductoBox = new DefaultComboBoxModel<String>();
 		tipoProductoBox = new JComboBox<String>();
 		consultarTipoProducto(modelotipoProductoBox);
 		tipoProductoBox.addActionListener(new ButtonClickListener());
 		tipoProductoBox.setActionCommand("tipoProductoSeleccionado");
-		constraintsPanel2.gridx++;
-		panel2.add(tipoProductoBox, constraintsPanel2);
+		constraintsElementosDet.gridx++;
+		panelElementosDet.add(tipoProductoBox, constraintsElementosDet);
 
 		producto = new JLabel("Producto");
-		constraintsPanel2.gridx++;
-		panel2.add(producto, constraintsPanel2);
+		constraintsElementosDet.gridx++;
+		panelElementosDet.add(producto, constraintsElementosDet);
 
 		modeloProductoBox = new DefaultComboBoxModel<String>();
 		productoBox = new JComboBox<String>();
 		productoBox.addActionListener(new ButtonClickListener());
 		productoBox.setActionCommand("productoSeleccionado");
-		constraintsPanel2.gridx++;
-		panel2.add(productoBox, constraintsPanel2);
+		productoBox.addItem("Elija una opccion ...");
+		constraintsElementosDet.gridx++;
+		panelElementosDet.add(productoBox, constraintsElementosDet);
 
 		cantidad = new JLabel("Cantidad");
-		constraintsPanel2.gridx++;
-		panel2.add(cantidad, constraintsPanel2);
+		constraintsElementosDet.gridx = 0;
+		constraintsElementosDet.gridy++;
+		panelElementosDet.add(cantidad, constraintsElementosDet);
 
 		cantidadTxt = new JTextField();
 		cantidadTxt.setPreferredSize(TxtDimen);
-		constraintsPanel2.gridx++;
-		panel2.add(cantidadTxt, constraintsPanel2);
+		constraintsElementosDet.gridx++;
+		panelElementosDet.add(cantidadTxt, constraintsElementosDet);
 
 		precioVenta = new JLabel("Precio");
-		constraintsPanel2.gridx++;
-		panel2.add(precioVenta, constraintsPanel2);
+		constraintsElementosDet.gridx++;
+		panelElementosDet.add(precioVenta, constraintsElementosDet);
 
 		precioVentaTxt = new JTextField();
 		precioVentaTxt.setPreferredSize(TxtDimen);
-		constraintsPanel2.gridx++;
-		panel2.add(precioVentaTxt, constraintsPanel2);
+		constraintsElementosDet.gridx++;
+		panelElementosDet.add(precioVentaTxt, constraintsElementosDet);
 
 		aceptarDet = new JButton("Aceptar");
 		aceptarDet.addActionListener(new ButtonClickListener());
 		aceptarDet.setActionCommand("aceptarDet");
-		constraintsPanel2.gridx = 0;
-		constraintsPanel2.gridy++;
-		panel2.add(aceptarDet, constraintsPanel2);
+		constraintsElementosDet.gridx = 0;
+		constraintsElementosDet.gridy++;
+		panelElementosDet.add(aceptarDet, constraintsElementosDet);
 
 		cancelarDet = new JButton("Cancelar");
-		constraintsPanel2.gridx++;
-		panel2.add(cancelarDet, constraintsPanel2);
+		cancelarDet.addActionListener(new ButtonClickListener());
+		cancelarDet.setActionCommand("cancelarDet");
+		constraintsElementosDet.insets = new Insets(0, -7, 4, 0);
+		constraintsElementosDet.gridx++;
+		panelElementosDet.add(cancelarDet, constraintsElementosDet);
 
 
 		panel3 = new JPanel();
@@ -690,8 +832,8 @@ public class RegistrarPedidoGUI {
 			if(command.equals("vendedorSeleccionado"))
 				consultarIDVendedor(vendedorBox.getSelectedItem().toString());
 
-			if(command.equals("tipoCobroSeleccionado"))
-				consultarIDCobro(modeloCobroBox.getSelectedItem().toString());
+			//if(command.equals("tipoCobroSeleccionado"))
+			//consultarIDCobro(modeloCobroBox.getSelectedItem().toString());
 
 			if(command.equals("tipoProductoSeleccionado"))
 				consultarProducto(modeloProductoBox);
@@ -734,7 +876,7 @@ public class RegistrarPedidoGUI {
 
 				}
 
-				if(!idTipoCobroTxt.getText().equals("")) {
+				/*if(!idTipoCobroTxt.getText().equals("")) {
 
 					objCabPedidoBean.setIdTipoCobro(Integer.parseInt(idTipoCobroTxt.getText()));
 
@@ -743,7 +885,7 @@ public class RegistrarPedidoGUI {
 
 					valido = false;
 
-				}
+				}*/
 
 				if(!estadoTxt.getText().equals("") && (estadoTxt.getText().equals("P") || estadoTxt.getText().equals("V"))) {
 
@@ -761,12 +903,26 @@ public class RegistrarPedidoGUI {
 					estadoTxt.setEnabled(false);
 					clienteBox.setEnabled(false);
 					vendedorBox.setEnabled(false);
-					tipoCobroBox.setEnabled(false);
+					//tipoCobroBox.setEnabled(false);
 					cancelarCab.setEnabled(false);
 					aceptarCab.setEnabled(false);
+					panel1.setBackground(Color.GRAY);
+					panelElementosCab.setBackground(Color.GRAY);
+					panelIDCab.setBackground(Color.GRAY);
+					consultarDisponible();
 
 				}
 
+
+			}
+
+			if(command.equals("cancelarCab")){
+
+				estadoTxt.setText("");
+				idClienteTxt.setText("");
+				idVendedorTxt.setText("");
+				clienteBox.setSelectedIndex(0);
+				vendedorBox.setSelectedIndex(0);
 
 			}
 
@@ -808,19 +964,6 @@ public class RegistrarPedidoGUI {
 				if(!cantidadTxt.getText().equals("")) {
 
 					objDetPedido.setCantidadDetPed(Integer.parseInt(cantidadTxt.getText()));
-					intComprometido = objDetPedido.getCantidadDetPed();
-					intSaldo -= intComprometido;
-					saldoTxt.setText(Integer.toString(intSaldo));
-					System.out.println("Saldo: " + intSaldo);
-
-					if(intSaldo < 0) {
-
-						intSaldo += intComprometido;
-						JOptionPane.showMessageDialog(mainFrame, "Exedio el saldo permitido", "Saldo Exedido", 3);
-						valido = false;
-
-					}
-
 
 				}
 				else {
@@ -839,17 +982,44 @@ public class RegistrarPedidoGUI {
 					valido = false;
 
 				}
+				
+				int comprometidoTmp = hmComprometidoPro.get(Integer.parseInt(idProductoTxt.getText()));
+				comprometidoTmp = comprometidoTmp + objDetPedido.getCantidadDetPed();
+				
+				if(comprometidoTmp > saldo) {
+					
+					valido = false;
+					JOptionPane.showMessageDialog(mainFrame, "Ha exedido el saldo Disponible", "Atencion", 3);				
+					
+				}
 
 				if(valido) {
 
+					hmComprometidoPro.put(Integer.parseInt(idProductoTxt.getText()), comprometidoTmp);
 					listObjDetPed.add(objDetPedido);
 					modelo.addRow(new Object[] {objDetPedido.getIdProducto(), objTipoProducto.getDescripcionTipPro(), objProducto.getDescripcionPro(), objDetPedido.getCantidadDetPed(), objDetPedido.getPrecioVtaDetPed()});
 					tabla.removeAll();
 					tabla.setModel(modelo);
+					
+					
+					disponibleTxt.setText(Integer.toString(saldo - comprometidoTmp));
+					productoBox.setSelectedIndex(0);
+					tipoProductoBox.setSelectedIndex(0);
 					cantidadTxt.setText("");
 					idProductoTxt.setText("");
-
+					
 				}
+			}
+
+			if(command.equals("cancelarDet")) {
+
+				idProductoTxt.setText("");
+				disponibleTxt.setText("");
+				tipoProductoBox.setSelectedIndex(0);
+				productoBox.setSelectedIndex(0);
+				cantidadTxt.setText("");
+				precioVentaTxt.setText("");
+
 			}
 
 			if(command.equals("guardar")) {

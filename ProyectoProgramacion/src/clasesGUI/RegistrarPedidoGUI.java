@@ -6,20 +6,16 @@ import java.sql.SQLException;
 import java.text.*;
 
 import javax.swing.*;
-import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.table.DefaultTableModel;
 
-import org.jdatepicker.impl.*;
+//import org.jdatepicker.impl.*;
 
-import com.jaspersoft.ireport.designer.undo.ObjectPropertyUndoableEdit;
-
+import com.toedter.calendar.JDateChooser;
 import mysql.ConexionMySql;
 import clasesBean.*;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Properties;
 
 public class RegistrarPedidoGUI {
 
@@ -50,6 +46,9 @@ public class RegistrarPedidoGUI {
 	private JLabel precioVenta;
 	//private JLabel tipoCobro; 
 	private JLabel disponible;
+	private JLabel subTotal;
+	private JLabel IVA;
+	private JLabel total;
 
 	private JTextField idCabeceraPedidoTxt;
 	private JTextField idClienteTxt;
@@ -61,6 +60,9 @@ public class RegistrarPedidoGUI {
 	private JTextField cantidadTxt;
 	private JTextField precioVentaTxt;
 	private JTextField disponibleTxt;
+	private JTextField subTotalTxt;
+	private JTextField IVATxt;
+	private JTextField totalTxt;
 
 	private JComboBox<String> clienteBox;
 	private JComboBox<String> vendedorBox;
@@ -76,7 +78,10 @@ public class RegistrarPedidoGUI {
 	private JButton cancelar;
 
 	private JTable tabla;
+	private JTable tabla2;
 	private JScrollPane tablaScrl;
+	
+	private JDateChooser date;
 
 	private DefaultTableModel modelo;
 	private DefaultComboBoxModel<String> modeloClienteBox;
@@ -87,19 +92,24 @@ public class RegistrarPedidoGUI {
 
 	private ConexionMySql conexion = new ConexionMySql();
 	private PersonaBean objPersona = new PersonaBean();
-	private Cap_PedidoBean objCabPedidoBean = new Cap_PedidoBean();
-	private Tipo_ProductoBean objTipoProducto = new Tipo_ProductoBean();
+	private CapPedidoBean objCabPedidoBean = new CapPedidoBean();
+	private TipoProductoBean objTipoProducto = new TipoProductoBean();
 	private ProductoBean objProducto = new ProductoBean();
-	private Det_PedidoBean objDetPedido = new Det_PedidoBean();
+	private DetPedidoBean objDetPedido = new DetPedidoBean();
 	//ClienteBean objCliente = new ClienteBean();
 	//VendedorBean objVendedor = new VendedorBean();
 	//Tipo_CobroBean objCobro = new Tipo_CobroBean();
 
-	private ArrayList<Det_PedidoBean> listObjDetPed = new ArrayList<Det_PedidoBean>();
+	private ArrayList<DetPedidoBean> listObjDetPed = new ArrayList<DetPedidoBean>();
 	private HashMap <Integer, Integer> hmSaldoPro = new HashMap<Integer, Integer>();
 	private HashMap <Integer, Integer> hmComprometidoPro = new HashMap<Integer, Integer>();
+	
+	private DateFormat fecha = new SimpleDateFormat("yyyy-MM-dd");
+	private String fechaStr;
 
 	private int saldo, comprometido;
+	
+	private double subtotal;
 
 	public RegistrarPedidoGUI() {
 
@@ -429,7 +439,7 @@ public class RegistrarPedidoGUI {
 
 		objCabPedidoBean.setNumeroPed(numPedidoTxt.getText());
 
-		String insertarNumPed = "INSERT INTO ventas2017a.cab_pedido (estadoPed, fechaPed, numeroFacturaPed, numeroPed, idCliente, idVendedor) VALUES ('" + objCabPedidoBean.getEstadoPed() + "', CURDATE(), '', '" + objCabPedidoBean.getNumeroPed() + "', '" + objCabPedidoBean.getIdCliente() + "', '" + objCabPedidoBean.getIdVendedor() + "')";
+		String insertarNumPed = "INSERT INTO ventas2017a.cab_pedido (estadoPed, fechaPed, numeroFacturaPed, numeroPed, idCliente, idVendedor) VALUES ('" + objCabPedidoBean.getEstadoPed() + "', '" + fechaStr + "', '', '" + objCabPedidoBean.getNumeroPed() + "', '" + objCabPedidoBean.getIdCliente() + "', '" + objCabPedidoBean.getIdVendedor() + "')";
 		System.out.println("Insertar cabecera: " + insertarNumPed);
 
 		conexion.insertar(insertarNumPed);
@@ -480,36 +490,10 @@ public class RegistrarPedidoGUI {
 
 	}
 
-	public class DateLabelFormatter extends AbstractFormatter {
-
-		private String datePattern = "yyyy/MM/dd";
-		private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
-
-		public Object stringToValue(String text) throws ParseException {
-
-			return dateFormatter.parseObject(text);
-
-		}
-
-		public String valueToString(Object value) throws ParseException {
-
-			if (value != null) {
-
-				Calendar cal = (Calendar) value;
-				return dateFormatter.format(cal.getTime());
-
-			}
-
-			return "";
-
-		}
-
-	}
-
 	public void showGUI() {
 
 		mainFrame = new JFrame("Registrar Pedido");
-		mainFrame.setSize(800, 580);
+		mainFrame.setSize(900, 580);
 		mainFrame.setLayout(new GridLayout(3, 1));
 		mainFrame.setAlwaysOnTop(true);
 		centrarFrame(mainFrame);
@@ -610,18 +594,14 @@ public class RegistrarPedidoGUI {
 		constraintsPanelElementoCab.gridx++;
 		panelElementosCab.add(fechaPedido, constraintsPanelElementoCab);
 
-		/*UtilDateModel model = new UtilDateModel();
-		Properties propierties = new Properties();
-		propierties.put("text.today", "Today");
-		propierties.put("text.month", "Month");
-		propierties.put("text.year", "Year");
-		JDatePanelImpl datePanel = new JDatePanelImpl(model, propierties);
-		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
-		java.sql.Date selectedDate = (java.sql.Date) datePicker.getModel().getValue();
-
+		date = new JDateChooser("yyyy/MM/dd", "####/##/##", '_');
+		date.getJCalendar().setWeekOfYearVisible(false);
+		date.getJCalendar().setMaxDayCharacters(1);
+		
 		constraintsPanelElementoCab.gridx++;
-		panelElementosCab.add(datePicker, constraintsPanelElementoCab);*/
 
+		panelElementosCab.add(date, constraintsPanelElementoCab);
+		
 
 		cliente = new JLabel("Cliente");
 		constraintsPanelElementoCab.gridx = 0;
@@ -800,18 +780,61 @@ public class RegistrarPedidoGUI {
 
 		panel4 = new JPanel();
 		panel4.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-		panel4.setLayout(new GridLayout(1, 2));
+		panel4.setLayout(new GridBagLayout());
 		panel3.add(panel4);
 
+		GridBagConstraints constraintsPanel4 = new GridBagConstraints();
+		constraintsPanel4.anchor = GridBagConstraints.LINE_END;
+		
+		subTotal = new JLabel("Subtotal: ");
+		constraintsPanel4.gridx = 0;
+		constraintsPanel4.gridy = 0;
+		constraintsPanel4.insets = new Insets(0, 0, 0, -300);
+		panel4.add(subTotal, constraintsPanel4);
+		
+		subTotalTxt = new JTextField();
+		subTotalTxt.setPreferredSize(new Dimension(70, 20));
+		subTotalTxt.setEditable(false);
+		constraintsPanel4.gridx++;
+		panel4.add(subTotalTxt, constraintsPanel4);
+		
+		IVA = new JLabel("IVA: ");
+		constraintsPanel4.gridx = 0;
+		constraintsPanel4.gridy++;
+		constraintsPanel4.insets = new Insets(0, 0, 0, -300);
+		panel4.add(IVA, constraintsPanel4);
+		
+		IVATxt = new JTextField("12%");
+		IVATxt.setPreferredSize(new Dimension(70, 20));
+		IVATxt.setEditable(false);
+		constraintsPanel4.gridx++;
+		panel4.add(IVATxt, constraintsPanel4);
+		
+		total = new JLabel("Total: ");
+		constraintsPanel4.gridx = 0;
+		constraintsPanel4.gridy++;
+		constraintsPanel4.insets = new Insets(0, 0, 0, -300);
+		panel4.add(total, constraintsPanel4);
+		
+		totalTxt = new JTextField();
+		totalTxt.setPreferredSize(new Dimension(70, 20));
+		totalTxt.setEditable(false);
+		constraintsPanel4.gridx++;
+		panel4.add(totalTxt, constraintsPanel4);
+		
+		constraintsPanel4.insets = new Insets(20, 0, 0, 0);
+		
 		guardar = new JButton("Guardar");
 		guardar.addActionListener(new ButtonClickListener());
 		guardar.setActionCommand("guardar");
-		panel4.add(guardar);
+		
+		panel4.add(guardar, constraintsPanel4);
 
 		cancelar = new JButton("Cancelar");
 		cancelar.addActionListener(new ButtonClickListener());
 		cancelar.setActionCommand("cancelar");
-		panel4.add(cancelar);
+		constraintsPanel4.gridx++;
+		panel4.add(cancelar, constraintsPanel4);
 
 		mainFrame.setVisible(true);
 
@@ -908,6 +931,8 @@ public class RegistrarPedidoGUI {
 					panelElementosCab.setBackground(Color.GRAY);
 					panelIDCab.setBackground(Color.GRAY);
 					consultarDisponible();
+					fechaStr = fecha.format(date.getDate());
+					System.out.println(fechaStr);
 
 				}
 
@@ -999,11 +1024,22 @@ public class RegistrarPedidoGUI {
 					tabla.removeAll();
 					tabla.setModel(modelo);
 					
+					//Calculos
+					int cantidad = 0;
+					double precio = 0;
+					
+					precio = (double) tabla.getValueAt(tabla.getRowCount() - 1, 4);
+					cantidad = (int) tabla.getValueAt(tabla.getRowCount() - 1, 3);
+					
+					subtotal += precio * cantidad;
+					
 					disponibleTxt.setText(Integer.toString(saldo - comprometidoTmp));
 					productoBox.setSelectedIndex(0);
 					tipoProductoBox.setSelectedIndex(0);
 					cantidadTxt.setText("");
 					idProductoTxt.setText("");
+					subTotalTxt.setText(Double.toString(subtotal));
+					totalTxt.setText(Double.toString(subtotal + (subtotal * 0.12)));
 
 				}
 			}
@@ -1026,6 +1062,8 @@ public class RegistrarPedidoGUI {
 					insertarUltimoNumPed();
 					consultarIDCabPedido();
 					insertarDetPedido();
+					System.exit(0);
+					
 				}
 			}
 

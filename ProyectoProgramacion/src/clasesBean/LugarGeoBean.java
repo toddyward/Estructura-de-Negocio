@@ -1,6 +1,6 @@
 package clasesBean;
 
-public class Lugar_GeoBean {
+public class LugarGeoBean {
 	
 	private String CodigoLugarGeo;
 	private String DescripcionLugGeo;

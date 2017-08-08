@@ -1,6 +1,6 @@
 package clasesBean;
 
-public class Tipo_ProductoBean {
+public class TipoProductoBean {
 	
 	private String descripcionTipPro;
 	

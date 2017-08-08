@@ -4,7 +4,7 @@ import java.sql.*;
 
 //import java.util.*;
 
-public class Cap_PedidoBean {
+public class CapPedidoBean {
 	
 	private String estadoPed;
 	private String numeroFacturaPed;

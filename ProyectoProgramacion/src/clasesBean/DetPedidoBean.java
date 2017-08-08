@@ -1,6 +1,6 @@
 package clasesBean;
 
-public class Det_PedidoBean {
+public class DetPedidoBean {
 	
 	private int idDetPedido; //PK
 	

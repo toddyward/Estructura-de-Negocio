@@ -51,8 +51,6 @@ public class RegistrarClienteGUIver2ArrayList {
 	private JTextField direccionCliTxt;
 	private JTextField telefonoCliTxt;
 
-
-
 	private String elementoSeleccionadoProvincia;
 	private String elementoSeleccionadoCanton;
 
@@ -76,7 +74,7 @@ public class RegistrarClienteGUIver2ArrayList {
 	private ConexionMySql cnxCliente = new ConexionMySql();
 
 	private ClienteBean objClienteBean = new ClienteBean();
-	private Lugar_GeoBean objLugarGeoBean = new Lugar_GeoBean();
+	private LugarGeoBean objLugarGeoBean = new LugarGeoBean();
 
 
 	public RegistrarClienteGUIver2ArrayList(){
@@ -98,6 +96,7 @@ public class RegistrarClienteGUIver2ArrayList {
 		mainFrame.setLayout(new GridLayout());
 		mainFrame.setTitle("Cliente");
 		mainFrame.setMinimumSize(new Dimension(1200, 600));
+		mainFrame.setAlwaysOnTop(true);
 		centrarFrame(mainFrame);
 
 		panel1 = new JPanel();

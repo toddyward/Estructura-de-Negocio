@@ -74,7 +74,7 @@ public class RegistrarClienteGUI {
 	private ConexionMySql cnxCliente = new ConexionMySql();
 
 	private ClienteBean objClienteBean = new ClienteBean();
-	private Lugar_GeoBean objLugarGeoBean = new Lugar_GeoBean();
+	private LugarGeoBean objLugarGeoBean = new LugarGeoBean();
 
 
 	public RegistrarClienteGUI(){
@@ -96,6 +96,7 @@ public class RegistrarClienteGUI {
 		mainFrame.setLayout(new GridLayout());
 		mainFrame.setTitle("Cliente");
 		mainFrame.setMinimumSize(new Dimension(1200, 600));
+		mainFrame.setAlwaysOnTop(true);
 		centrarFrame(mainFrame);
 
 		panel1 = new JPanel();

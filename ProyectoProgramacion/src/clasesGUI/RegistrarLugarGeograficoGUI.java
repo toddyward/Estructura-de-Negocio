@@ -47,7 +47,7 @@ public class RegistrarLugarGeograficoGUI {
 
 	private ConexionMySql conexion = new ConexionMySql();
 
-	private Lugar_GeoBean objLugarGeoBean = new Lugar_GeoBean();
+	private LugarGeoBean objLugarGeoBean = new LugarGeoBean();
 
 	private JScrollPane tablaScroll;
 
@@ -64,7 +64,7 @@ public class RegistrarLugarGeograficoGUI {
 		mainFrame.setTitle("Registrar lugar geografico");
 		centrarFrame(mainFrame);
 		mainFrame.setLayout(new GridLayout());
-
+		mainFrame.setAlwaysOnTop(true);
 
 		panel1 = new JPanel();
 		panel1.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));

@@ -78,7 +78,6 @@ public class RegistrarPedidoGUI {
 	private JButton cancelar;
 
 	private JTable tabla;
-	private JTable tabla2;
 	private JScrollPane tablaScrl;
 	
 	private JDateChooser date;
@@ -119,7 +118,7 @@ public class RegistrarPedidoGUI {
 
 	public void consultarCliente(DefaultComboBoxModel<String> modeloClienteBox) {
 
-		String query = "SELECT persona.nombrePer FROM persona, cliente WHERE persona.idPersona=cliente.idPersona";
+		String query = "SELECT persona.nombrePer FROM persona, cliente WHERE persona.idPersona=cliente.idPersona ORDER BY nombrePer ASC";
 		java.sql.ResultSet result = conexion.consulta(query);
 		System.out.println("Clientes: " + query);
 
@@ -146,7 +145,7 @@ public class RegistrarPedidoGUI {
 
 	public void consultarVendedor(DefaultComboBoxModel<String> modeloVendedorBox) {
 
-		String query = "SELECT persona.nombrePer FROM persona, vendedor WHERE persona.idPersona=vendedor.idPersona";
+		String query = "SELECT persona.nombrePer FROM persona, vendedor WHERE persona.idPersona=vendedor.idPersona ORDER BY nombrePer ASC;";
 		java.sql.ResultSet result = conexion.consulta(query);
 		System.out.println("Vendedores: " + query);
 

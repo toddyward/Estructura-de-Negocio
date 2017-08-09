@@ -77,6 +77,7 @@ public class RegistrarReportesGUI {
 		mainFrame = new JFrame("Administrar filtro de Reporte");
 		mainFrame.setSize(500, 300);
 		mainFrame.setLayout(new GridLayout(1, 1));
+		mainFrame.setAlwaysOnTop(true);
 		centrarFrame(mainFrame);
 
 		panel1 = new JPanel();

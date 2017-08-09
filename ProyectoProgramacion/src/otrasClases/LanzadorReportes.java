@@ -8,15 +8,11 @@ import java.util.HashMap;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 import net.sf.jasperreports.view.JRViewer;
 
 public class LanzadorReportes extends JDialog{
@@ -41,43 +37,7 @@ public class LanzadorReportes extends JDialog{
 		
 	}
 	
-	/*public void cargarReporte(final String nombreArchivo,final HashMap<String, String> parametros, final JRResultSetDataSource datos){				
-		
-		try {
-			
-			this.archivoImprimir = JasperFillManager.fillReport(nombreArchivo, parametros,datos );
-			this.panelVisor= new JRViewer(this.archivoImprimir);
-			this.getContentPane().add(this.panelVisor,BorderLayout.CENTER);
-			
-		}catch(final JRException e) {		
-			
-			e.printStackTrace();
-			
-		}
-		
-	}*/
 	
-	/*public void cargarReporte(final String nombreArchivo,final HashMap<String, String> parametros, final JREmptyDataSource datos){
-	
-		
-	
-	}*/
-	
-
-/*	public void cargarReporte(final String nombreArchivo,final HashMap<String, String> parametros, final JRTableModelDataSource  datos){
-		
-		try {
-			
-			this.archivoImprimir = JasperFillManager.fillReport(nombreArchivo, parametros,datos );
-			this.panelVisor= new JRViewer(this.archivoImprimir);
-			this.getContentPane().add(this.panelVisor,BorderLayout.CENTER);
-
-		}catch(final JRException e) {
-
-			e.printStackTrace();
-		}	
-		
-	}*/
 
 	public void cargarReporte(String nombreArchivo, HashMap<String, Object> parametros, Connection datos){
 
@@ -97,23 +57,6 @@ public class LanzadorReportes extends JDialog{
 		}
 		
 	}
-
-
-	/*public void cargarReporte(final String nombreArchivo,final HashMap<String, String> parametros, final JRBeanCollectionDataSource datos){
-
-		try {
-			
-			this.archivoImprimir = JasperFillManager.fillReport(nombreArchivo, parametros,datos );
-			this.panelVisor= new JRViewer(this.archivoImprimir);
-			this.getContentPane().add(this.panelVisor,BorderLayout.CENTER);
-
-		} catch (final JRException e) {
-
-			e.printStackTrace();
-			
-		}
-		
-	}*/
 
 	public void setVisible(final boolean ver){
 

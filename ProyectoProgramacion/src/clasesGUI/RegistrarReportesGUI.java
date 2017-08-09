@@ -198,16 +198,27 @@ public class RegistrarReportesGUI {
 		public void actionPerformed (ActionEvent e) {
 
 			String command = e.getActionCommand();
+			
+			Boolean valido = true;
 
 			if(command.equals("tipoProductoSeleccionado")) 
 				consultarProducto(modeloProductoBox);
 
 			if(command.equals("LanzarReporte")) {
 
-				fechaInicioStr = fechaInicio.format(fechaDesde.getDate());
-				fechaFinStr = fechaFin.format(fechaHasta.getDate());
+				try {
+					
+					fechaInicioStr = fechaInicio.format(fechaDesde.getDate());
+					fechaFinStr = fechaFin.format(fechaHasta.getDate());
+				
+				}catch(NullPointerException error) {
+					
+					JOptionPane.showMessageDialog(mainFrame, "Elija un rango de fecha", "Datos Insuficientes", 3);
+					valido = false;
+					
+				}
 
-				if(reporteBox.getSelectedItem().toString().equals("GTDDVSV")) {
+				if(reporteBox.getSelectedItem().toString().equals("GTDDVSV") && valido) {
 
 					String nombre = "";
 					if(!vendedorBox.getSelectedItem().toString().equals("Elija una opcion ...")) 
@@ -233,7 +244,7 @@ public class RegistrarReportesGUI {
 
 				}
 
-				if(reporteBox.getSelectedItem().toString().equals("GTDDVSC")) {
+				if(reporteBox.getSelectedItem().toString().equals("GTDDVSC") && valido) {
 
 					String nombre = "";
 					if(!clienteBox.getSelectedItem().toString().equals("Elija una opcion ...")) 
@@ -258,12 +269,12 @@ public class RegistrarReportesGUI {
 
 				}
 
-				if(reporteBox.getSelectedItem().toString().equals("GLDCVSP")) {
+				if(reporteBox.getSelectedItem().toString().equals("GLDCVSP") && !productoBox.getSelectedItem().toString().equals("Elija una opccion ...") && valido) {
 
 					String producto = "";
 					if(!productoBox.getSelectedItem().toString().equals("Elija una opccion ..."))
 						producto = " AND pro.descripcionPro='" + productoBox.getSelectedItem().toString() + "' ";
-					
+
 					String query =" SELECT lug3.descripcionLugGeo, SUM(det.cantidadDetPed) "
 							+ "FROM cab_pedido cab, lugar_geo lug, lugar_geo lug2, lugar_geo lug3, cliente cli, det_pedido det, producto pro "
 							+ "WHERE lug.idLugarGeoPadre=lug2.idLugarGeo AND lug2.idLugarGeoPadre=lug3.idLugarGeo AND cli.idLugarGeo=lug.idLugarGeo AND cab.idCliente=cli.idCliente AND det.idCabPedido=cab.idCabPedido AND det.idProducto =pro.idProducto " + producto + "AND cab.fechaPed BETWEEN '" + fechaInicioStr + "' AND '" + fechaFinStr + "' "
@@ -278,8 +289,13 @@ public class RegistrarReportesGUI {
 					lanzadorReportes.cargarReporte("/home/tkhacker/git/Estructura-de-Negocio/ProyectoProgramacion/Reportes/ventasSegunProvincia.jrxml", hmParametros, conexion.getConeccion());
 					lanzadorReportes.setSize(new Dimension(820,800));
 					lanzadorReportes.show(true);
-					
+
 				}
+
+				else if(reporteBox.getSelectedItem().toString().equals("GLDCVSP") && productoBox.getSelectedItem().toString().equals("Elija una opccion ...")) 
+						JOptionPane.showMessageDialog(mainFrame, "Elija un producto", "Datos Insuficientes", 3);
+
+
 
 			}
 

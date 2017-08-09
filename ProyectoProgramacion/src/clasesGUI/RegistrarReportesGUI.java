@@ -27,6 +27,7 @@ public class RegistrarReportesGUI {
 	private JLabel desdeFecha;
 	private JLabel hastaFecha;
 	private JLabel cliente;
+	private JLabel vendedor;
 	private JLabel tipoProducto;
 	private JLabel producto;
 	private JLabel reporte;
@@ -35,11 +36,13 @@ public class RegistrarReportesGUI {
 	private JDateChooser fechaHasta;
 
 	private JComboBox<String> clienteBox;
+	private JComboBox<String> vendedorBox;
 	private JComboBox<String> tipoProductoBox;
 	private JComboBox<String> productoBox;
 	private JComboBox<String> reporteBox;
 
 	private DefaultComboBoxModel<String> modeloClienteBox;
+	private DefaultComboBoxModel<String> modeloVendedorBox;
 	private DefaultComboBoxModel<String> modeloTipoProductoBox;
 	private DefaultComboBoxModel<String> modeloProductoBox;
 
@@ -49,12 +52,12 @@ public class RegistrarReportesGUI {
 	private PersonaBean objPersona = new PersonaBean();
 	private TipoProductoBean objTipoProducto = new TipoProductoBean();
 	private ProductoBean objProducto = new ProductoBean();
-	
+
 	private DateFormat fechaInicio = new SimpleDateFormat("yyyy-MM-dd");
 	private DateFormat fechaFin = new SimpleDateFormat("yyyy-MM-dd");
 	private String fechaInicioStr;
 	private String fechaFinStr;
-	
+
 	private HashMap<String, Object> hmParametros;
 
 	public RegistrarReportesGUI() {
@@ -72,7 +75,7 @@ public class RegistrarReportesGUI {
 	public void showGUI() {
 
 		mainFrame = new JFrame("Administrar filtro de Reporte");
-		mainFrame.setSize(500, 270);
+		mainFrame.setSize(500, 300);
 		mainFrame.setLayout(new GridLayout(1, 1));
 		centrarFrame(mainFrame);
 
@@ -115,12 +118,16 @@ public class RegistrarReportesGUI {
 		panel1.add(reporte, constraints);
 
 		reporteBox = new JComboBox<String>();
-		reporteBox.addItem("GLDDVSV");
+		reporteBox.addItem("Elija una opcion ...");
+		reporteBox.addItem("GTDDVSV");	//Generar Tabla Diaria de Ventas Segun Vendedor
+		reporteBox.addItem("GTDDVSC");	//Generar Tabla Diaria de Ventas Segun Cliente
+		reporteBox.addItem("GLDCVSP");	//Generar Lista de Cantidad Vendida Segun Provincia
+		reporteBox.addActionListener(new ButtonClickListener());
+		reporteBox.setActionCommand("ReporteBox");
 		reporteBox.setPreferredSize(box);
 		constraints.gridx++;
 		panel1.add(reporteBox, constraints);
-		
-		
+
 		cliente = new JLabel("Cliente");
 		constraints.gridx = 0;
 		constraints.gridy++;
@@ -132,6 +139,18 @@ public class RegistrarReportesGUI {
 		clienteBox.setPreferredSize(box);
 		constraints.gridx++;
 		panel1.add(clienteBox, constraints);
+
+		vendedor = new JLabel("Vendedor");
+		constraints.gridx = 0;
+		constraints.gridy++;
+		panel1.add(vendedor, constraints);
+
+		modeloVendedorBox = new DefaultComboBoxModel<String>();
+		vendedorBox = new JComboBox<String>();
+		consultarVendedor(modeloVendedorBox);
+		vendedorBox.setPreferredSize(box);
+		constraints.gridx++;
+		panel1.add(vendedorBox, constraints);
 
 		tipoProducto = new JLabel("Tipo Producto");
 		constraints.gridx = 0;
@@ -179,43 +198,134 @@ public class RegistrarReportesGUI {
 
 			String command = e.getActionCommand();
 
-				if(command.equals("tipoProductoSeleccionado")) 
-					consultarProducto(modeloProductoBox);
-				
-				if(command.equals("LanzarReporte")) {
+			if(command.equals("tipoProductoSeleccionado")) 
+				consultarProducto(modeloProductoBox);
+
+			if(command.equals("LanzarReporte")) {
+
+				fechaInicioStr = fechaInicio.format(fechaDesde.getDate());
+				fechaFinStr = fechaFin.format(fechaHasta.getDate());
+
+				if(reporteBox.getSelectedItem().toString().equals("GTDDVSV")) {
+
+					String nombre = "";
+					if(!vendedorBox.getSelectedItem().toString().equals("Elija una opcion ...")) 
+						nombre = " AND per.nombrePer='" + vendedorBox.getSelectedItem().toString() + "' ";
+
+					String producto = "";
+					if(!productoBox.getSelectedItem().toString().equals("Elija una opccion ..."))
+						producto = " AND pro.descripcionPro='" + productoBox.getSelectedItem().toString() + "' ";
+
+					String query = "SELECT cab.fechaPed, per.nombrePer, pro.descripcionPro, SUM(det.cantidadDetPed) "
+							+ "FROM cab_pedido cab, vendedor ven, persona per, det_pedido det, producto pro "
+							+ "WHERE cab.idVendedor=ven.idVendedor AND per.idPersona=ven.idPersona AND cab.idCabPedido=det.idCabPedido AND det.idProducto=pro.idProducto " + nombre + producto + "AND cab.fechaPed BETWEEN '" + fechaInicioStr + "' AND '" + fechaFinStr + "' "
+							+ "GROUP BY pro.descripcionPro, cab.fechaPed "
+							+ "ORDER BY cab.fechaPed ASC";
+
+					hmParametros = new HashMap<String, Object>();
+					hmParametros.put("query", query);
+					System.out.println(query);
+					LanzadorReportes lanzadorReportes = new LanzadorReportes(new JFrame(),"Reporte");
+					lanzadorReportes.cargarReporte("/home/tkhacker/git/Estructura-de-Negocio/ProyectoProgramacion/Reportes/ventasSegunVendedor.jrxml", hmParametros, conexion.getConeccion());
+					lanzadorReportes.setSize(new Dimension(820,800));
+					lanzadorReportes.show(true);
+
+				}
+
+				if(reporteBox.getSelectedItem().toString().equals("GTDDVSC")) {
+
+					String nombre = "";
+					if(!clienteBox.getSelectedItem().toString().equals("Elija una opcion ...")) 
+						nombre = " AND per.nombrePer='" + clienteBox.getSelectedItem().toString() + "' ";
+
+					String producto = "";
+					if(!productoBox.getSelectedItem().toString().equals("Elija una opccion ..."))
+						producto = " AND pro.descripcionPro='" + productoBox.getSelectedItem().toString() + "' ";
+
+					String query ="SELECT cab.fechaPed, per.nombrePer AS Cliente, pro.descripcionPro AS Producto, SUM(det.cantidadDetPed) AS Cantidad  "
+							+ "FROM persona per, cliente cli, cab_pedido cab, det_pedido det, producto pro "
+							+ "WHERE per.idPersona=cli.idPersona AND cli.idCliente=cab.idCliente AND cab.idCabPedido=det.idCabPedido AND det.idProducto=pro.idProducto " + nombre + producto + "AND cab.fechaPed BETWEEN '" + fechaInicioStr + "' AND '" + fechaFinStr + "' "
+							+ "GROUP BY cab.fechaPed ASC, per.nombrePer, pro.descripcionPro";
+
+					hmParametros = new HashMap<String, Object>();
+					hmParametros.put("query", query);
+					System.out.println(query);
+					LanzadorReportes lanzadorReportes = new LanzadorReportes(new JFrame(),"Reporte");
+					lanzadorReportes.cargarReporte("/home/tkhacker/git/Estructura-de-Negocio/ProyectoProgramacion/Reportes/ventasSegunCliente.jrxml", hmParametros, conexion.getConeccion());
+					lanzadorReportes.setSize(new Dimension(820,800));
+					lanzadorReportes.show(true);
+
+				}
+
+				if(reporteBox.getSelectedItem().toString().equals("GLDCVSP")) {
+
+					String producto = "";
+					if(!productoBox.getSelectedItem().toString().equals("Elija una opccion ..."))
+						producto = " AND pro.descripcionPro='" + productoBox.getSelectedItem().toString() + "' ";
 					
-					fechaInicioStr = fechaInicio.format(fechaDesde.getDate());
-					fechaFinStr = fechaFin.format(fechaHasta.getDate());
-					
-					if(reporteBox.getSelectedItem().toString().equals("GLDDVSV")) {
-						
-						String query = "SELECT cab.fechaPed, per.nombrePer, pro.descripcionPro, SUM(det.cantidadDetPed) "
-								+ "FROM cab_pedido cab, vendedor ven, persona per, det_pedido det, producto pro "
-								+ "WHERE cab.idVendedor=ven.idVendedor AND per.idPersona=ven.idPersona AND cab.idCabPedido=det.idCabPedido AND det.idProducto=pro.idProducto AND cab.fechaPed BETWEEN '" + fechaInicioStr + "' AND '" + fechaFinStr + "' "
-								+ "GROUP BY pro.descripcionPro, cab.fechaPed "
-								+ "ORDER BY cab.fechaPed ASC";
-						
-						hmParametros = new HashMap<String, Object>();
-						hmParametros.put("query", query);
-						System.out.println(query);
-						LanzadorReportes lanzadorReportes = new LanzadorReportes(new JFrame(),"Reporte");
-						lanzadorReportes.cargarReporte("/home/tkhacker/git/Estructura-de-Negocio/ProyectoProgramacion/Reportes/ventasSegunCliente.jrxml", hmParametros, conexion.getConeccion() );
-						lanzadorReportes.setSize(new Dimension(820,600));
-						lanzadorReportes.show(true);
-						
-					}
+					String query =" SELECT lug3.descripcionLugGeo, SUM(det.cantidadDetPed) "
+							+ "FROM cab_pedido cab, lugar_geo lug, lugar_geo lug2, lugar_geo lug3, cliente cli, det_pedido det, producto pro "
+							+ "WHERE lug.idLugarGeoPadre=lug2.idLugarGeo AND lug2.idLugarGeoPadre=lug3.idLugarGeo AND cli.idLugarGeo=lug.idLugarGeo AND cab.idCliente=cli.idCliente AND det.idCabPedido=cab.idCabPedido AND det.idProducto =pro.idProducto " + producto + "AND cab.fechaPed BETWEEN '" + fechaInicioStr + "' AND '" + fechaFinStr + "' "
+							+ "GROUP BY lug3.descripcionLugGeo ASC, pro.descripcionPro";
+
+					hmParametros = new HashMap<String, Object>();
+					hmParametros.put("query", query);
+					hmParametros.put("subtitulo", "Producto: " + productoBox.getSelectedItem().toString().toUpperCase());
+					hmParametros.put("fecha", "Desde: " + fechaInicioStr + " Hasta: " + fechaFinStr);
+					System.out.println(query);
+					LanzadorReportes lanzadorReportes = new LanzadorReportes(new JFrame(),"Reporte");
+					lanzadorReportes.cargarReporte("/home/tkhacker/git/Estructura-de-Negocio/ProyectoProgramacion/Reportes/ventasSegunProvincia.jrxml", hmParametros, conexion.getConeccion());
+					lanzadorReportes.setSize(new Dimension(820,800));
+					lanzadorReportes.show(true);
 					
 				}
 
+			}
+
+			if(command.equals("ReporteBox")) {
+
+				if(reporteBox.getSelectedItem().toString().equals("GTDDVSV")) {
+
+					clienteBox.setEnabled(true);
+					vendedorBox.setEnabled(true);
+					tipoProductoBox.setEnabled(true);
+					productoBox.setEnabled(true);
+					clienteBox.setEnabled(false);
+
+				}
+
+				if(reporteBox.getSelectedItem().toString().equals("GTDDVSC")) {
+
+					clienteBox.setEnabled(true);
+					vendedorBox.setEnabled(true);
+					tipoProductoBox.setEnabled(true);
+					productoBox.setEnabled(true);
+					vendedorBox.setEnabled(false);
+
+				}
+
+				if(reporteBox.getSelectedItem().toString().equals("GLDCVSP")) {
+
+					clienteBox.setEnabled(true);
+					vendedorBox.setEnabled(true);
+					tipoProductoBox.setEnabled(true);
+					productoBox.setEnabled(true);
+					clienteBox.setEnabled(false);
+					vendedorBox.setEnabled(false);
+
+				}
+
+			}
+
 		}
 	}
-	
-	
+
+
 
 	public void consultarCliente(DefaultComboBoxModel<String> modeloClienteBox) {
 
-		
-		String query = "SELECT persona.nombrePer FROM persona, cliente WHERE persona.idPersona=cliente.idPersona";
+
+		String query = "SELECT persona.nombrePer FROM persona, cliente WHERE persona.idPersona=cliente.idPersona ORDER BY nombrePer ASC";
 		java.sql.ResultSet result = conexion.consulta(query);
 		System.out.println("Clientes: " + query);
 
@@ -237,6 +347,33 @@ public class RegistrarReportesGUI {
 		}
 
 		clienteBox.setModel(modeloClienteBox);
+
+	}
+
+	public void consultarVendedor(DefaultComboBoxModel<String> modeloVendedorBox) {
+
+		String query = "SELECT persona.nombrePer FROM persona, vendedor WHERE persona.idPersona=vendedor.idPersona ORDER BY nombrePer ASC;";
+		java.sql.ResultSet result = conexion.consulta(query);
+		System.out.println("Vendedores: " + query);
+
+		modeloVendedorBox.addElement("Elija una opcion ...");
+
+		try {
+
+			while(result.next()) {
+
+				objPersona.setNombrePer(result.getString("nombrePer"));
+				modeloVendedorBox.addElement(objPersona.getNombrePer());
+
+			}
+
+		}catch(SQLException error) {
+
+			System.out.println(error);
+
+		}
+
+		vendedorBox.setModel(modeloVendedorBox);
 
 	}
 

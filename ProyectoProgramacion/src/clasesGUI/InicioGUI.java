@@ -3,19 +3,22 @@ package clasesGUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import clasesGUI.*;
-
 import javax.swing.*;
 
 public class InicioGUI {
 
 	private JFrame mainFrame;
+	
 	private JMenuBar menubarra;
+	
 	private JMenu menu;
+	private JMenu menu2;
+	
 	private JMenuItem registrarClienteItm;
 	private JMenuItem registrarCliente2Itm;
 	private JMenuItem registrarLugarGeograficoItm;
 	private JMenuItem registrarPedidoItm;
+	private JMenuItem registrarReportes;
 
 	public InicioGUI() {
 
@@ -29,8 +32,6 @@ public class InicioGUI {
 		mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		mainFrame.setTitle("Estructura de negocio");
 		mainFrame.setLayout(new GridBagLayout());
-
-		GridBagConstraints constraints = new GridBagConstraints();
 
 		menubarra = new JMenuBar();
 		mainFrame.setJMenuBar(menubarra);
@@ -58,6 +59,15 @@ public class InicioGUI {
 		registrarPedidoItm.addActionListener(new ButtonClickListener());
 		registrarPedidoItm.setActionCommand("registrarPedido");
 		menu.add(registrarPedidoItm);
+		
+		menu2 = new JMenu();
+		menu2.setText("Reportes");
+		menubarra.add(menu2);
+		
+		registrarReportes = new JMenuItem("Iniciar un Reporte");
+		registrarReportes.addActionListener(new ButtonClickListener());
+		registrarReportes.setActionCommand("registrarReportes");
+		menu2.add(registrarReportes);
 
 		mainFrame.setVisible(true);
 
@@ -80,6 +90,9 @@ public class InicioGUI {
 			
 			else if(command.equals("registrarPedido"))
 				new RegistrarPedidoGUI();
+			
+			else if(command.equals("registrarReportes"))
+				new RegistrarReportesGUI();
 
 		}
 

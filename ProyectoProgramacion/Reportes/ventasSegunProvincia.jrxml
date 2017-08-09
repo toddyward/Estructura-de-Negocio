@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ventasSegunProvincia" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="57a52683-b0aa-409a-8840-c5f8d324f004">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="query" class="java.lang.String">
+		<defaultValueExpression><![CDATA["SELECT lug3.descripcionLugGeo, SUM(det.cantidadDetPed) FROM cab_pedido cab, lugar_geo lug, lugar_geo lug2, lugar_geo lug3, cliente cli, det_pedido det, producto pro WHERE lug.idLugarGeoPadre=lug2.idLugarGeo AND lug2.idLugarGeoPadre=lug3.idLugarGeo AND cli.idLugarGeo=lug.idLugarGeo AND cab.idCliente=cli.idCliente AND det.idCabPedido=cab.idCabPedido AND det.idProducto =pro.idProducto GROUP BY lug3.descripcionLugGeo ASC, pro.descripcionPro"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="subtitulo" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[$P!{query}]]>
+	</queryString>
+	<field name="descripcionLugGeo" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="SUM(det.cantidadDetPed)" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="197" y="16" width="149" height="40" uuid="f857ab27-9ef8-41ab-a719-de8d2dbe935b"/>
+				<textElement textAlignment="Center">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ventas segun provincia]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="375" y="16" width="100" height="20" uuid="2aa98e30-a7b9-47df-a357-5fb1aa06aa3a"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="46" splitType="Stretch">
+			<textField>
+				<reportElement x="97" y="20" width="184" height="20" uuid="e5b9fe17-c21c-4b96-a356-f4201f5eb9e7"/>
+				<textFieldExpression><![CDATA[$P{subtitulo}.toString()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="97" y="0" width="201" height="20" uuid="853be919-4605-4eca-a7a6-a290b35b2710"/>
+				<textFieldExpression><![CDATA[$P{fecha}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="97" y="10" width="100" height="20" uuid="c2f9bbed-c35e-400e-b8be-85ecd9b2f16c"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Provincia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="217" y="10" width="100" height="20" uuid="760e933b-68d2-42e4-bd04-f67d482af8d2"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Cantidad]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="35" splitType="Stretch">
+			<textField>
+				<reportElement x="97" y="0" width="100" height="20" uuid="08031bac-35ec-423c-a6f9-304ae9d0a9e2"/>
+				<textFieldExpression><![CDATA[$F{descripcionLugGeo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="217" y="0" width="100" height="20" uuid="183e5c0a-a244-4c20-9cdf-ae2bde0ff249"/>
+				<textFieldExpression><![CDATA[$F{SUM(det.cantidadDetPed)}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

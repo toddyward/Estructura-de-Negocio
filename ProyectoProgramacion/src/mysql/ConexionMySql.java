@@ -106,5 +106,9 @@ public class ConexionMySql {
 		}
 
 	}
+	
+	public Connection getConeccion(){
+		return this.conexion;
+	}
 
 }

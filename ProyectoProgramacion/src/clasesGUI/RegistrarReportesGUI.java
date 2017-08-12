@@ -240,7 +240,7 @@ public class RegistrarReportesGUI {
 					LanzadorReportes lanzadorReportes = new LanzadorReportes(new JFrame(),"Reporte");
 					lanzadorReportes.cargarReporte("/home/tkhacker/git/Estructura-de-Negocio/ProyectoProgramacion/Reportes/ventasSegunVendedor.jrxml", hmParametros, conexion.getConeccion());
 					lanzadorReportes.setSize(new Dimension(820,800));
-					lanzadorReportes.show(true);
+					lanzadorReportes.setVisible(true);
 
 				}
 
@@ -265,7 +265,7 @@ public class RegistrarReportesGUI {
 					LanzadorReportes lanzadorReportes = new LanzadorReportes(new JFrame(),"Reporte");
 					lanzadorReportes.cargarReporte("/home/tkhacker/git/Estructura-de-Negocio/ProyectoProgramacion/Reportes/ventasSegunCliente.jrxml", hmParametros, conexion.getConeccion());
 					lanzadorReportes.setSize(new Dimension(820,800));
-					lanzadorReportes.show(true);
+					lanzadorReportes.setVisible(true);
 
 				}
 
@@ -288,7 +288,7 @@ public class RegistrarReportesGUI {
 					LanzadorReportes lanzadorReportes = new LanzadorReportes(new JFrame(),"Reporte");
 					lanzadorReportes.cargarReporte("/home/tkhacker/git/Estructura-de-Negocio/ProyectoProgramacion/Reportes/ventasSegunProvincia.jrxml", hmParametros, conexion.getConeccion());
 					lanzadorReportes.setSize(new Dimension(820,800));
-					lanzadorReportes.show(true);
+					lanzadorReportes.setVisible(true);
 
 				}
 

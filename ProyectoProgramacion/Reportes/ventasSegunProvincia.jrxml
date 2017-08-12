@@ -10,7 +10,7 @@
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="fecha" class="java.lang.String">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[fdsfasd]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[$P!{query}]]>
@@ -83,7 +83,12 @@
 		<band height="45" splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="54" splitType="Stretch"/>
+		<band height="101" splitType="Stretch">
+			<image>
+				<reportElement x="333" y="10" width="206" height="76" uuid="1d8e6cef-2429-417d-8e28-6ef22416b93d"/>
+				<imageExpression><![CDATA["/home/tkhacker/git/Estructura-de-Negocio/ProyectoProgramacion/img/gplv3.jpg"]]></imageExpression>
+			</image>
+		</band>
 	</pageFooter>
 	<summary>
 		<band height="42" splitType="Stretch"/>

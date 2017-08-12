@@ -39,7 +39,19 @@
 		</band>
 	</title>
 	<pageHeader>
-		<band height="35" splitType="Stretch"/>
+		<band height="148" splitType="Stretch">
+			<image>
+				<reportElement x="49" y="20" width="147" height="121" uuid="437dd2b8-a9f7-46ca-8897-a9ce32749624"/>
+				<imageExpression><![CDATA["/home/tkhacker/git/Estructura-de-Negocio/ProyectoProgramacion/img/photo_2017-08-09_12-15-11.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="49" y="0" width="127" height="20" uuid="72ad360b-be7e-4852-9c25-7a3f2b0e0893"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Gerente de Ventas:]]></text>
+			</staticText>
+		</band>
 	</pageHeader>
 	<columnHeader>
 		<band splitType="Stretch"/>
@@ -54,7 +66,7 @@
 		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="352" splitType="Stretch">
+		<band height="448" splitType="Stretch">
 			<crosstab>
 				<reportElement x="18" y="0" width="315" height="146" uuid="02746459-9883-4d9b-806d-52fb5be9e55e"/>
 				<rowGroup name="fechaPed" width="70" totalPosition="End">
@@ -213,22 +225,6 @@
 					<itemLabel/>
 				</piePlot>
 			</pieChart>
-			<pieChart>
-				<chart>
-					<reportElement x="344" y="218" width="200" height="112" uuid="32c8298a-339e-4220-a77f-f1e90b197747"/>
-					<chartTitle/>
-					<chartSubtitle/>
-					<chartLegend/>
-				</chart>
-				<pieDataset>
-					<keyExpression><![CDATA[$F{descripcionPro}.toString()]]></keyExpression>
-					<valueExpression><![CDATA[$F{SUM(det.cantidadDetPed)}]]></valueExpression>
-				</pieDataset>
-				<piePlot>
-					<plot/>
-					<itemLabel/>
-				</piePlot>
-			</pieChart>
 			<staticText>
 				<reportElement x="395" y="11" width="100" height="20" uuid="6fb0c310-8981-43a0-b197-24e7eab66c86"/>
 				<textElement textAlignment="Justified">
@@ -236,13 +232,10 @@
 				</textElement>
 				<text><![CDATA[Vendedores]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="395" y="185" width="100" height="20" uuid="3b66512c-a261-4577-bdb0-fe6fafd0e1bd"/>
-				<textElement textAlignment="Justified">
-					<font size="14"/>
-				</textElement>
-				<text><![CDATA[Productos]]></text>
-			</staticText>
+			<image>
+				<reportElement x="320" y="359" width="235" height="89" uuid="e34b049d-8d39-41c5-8646-9e82ca5b3523"/>
+				<imageExpression><![CDATA["/home/tkhacker/git/Estructura-de-Negocio/ProyectoProgramacion/img/gplv3.jpg"]]></imageExpression>
+			</image>
 		</band>
 	</summary>
 </jasperReport>

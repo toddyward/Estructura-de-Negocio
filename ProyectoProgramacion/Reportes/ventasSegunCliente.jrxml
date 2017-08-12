@@ -50,7 +50,7 @@
 		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="196" splitType="Stretch">
+		<band height="224" splitType="Stretch">
 			<pieChart>
 				<chart>
 					<reportElement x="337" y="13" width="200" height="112" uuid="d4e35cc5-6ab1-46c2-a062-ffab431fb2eb"/>
@@ -209,6 +209,10 @@
 					</cellContents>
 				</crosstabCell>
 			</crosstab>
+			<image>
+				<reportElement x="337" y="164" width="210" height="60" uuid="c5485d1b-535b-43d1-87af-b4b0728898ec"/>
+				<imageExpression><![CDATA["/home/tkhacker/git/Estructura-de-Negocio/ProyectoProgramacion/img/gplv3.jpg"]]></imageExpression>
+			</image>
 		</band>
 	</summary>
 </jasperReport>

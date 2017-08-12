@@ -43,7 +43,6 @@ public class LanzadorReportes extends JDialog{
 
 		try {
 	        JasperReport jasperReport =  JasperCompileManager.compileReport(nombreArchivo);
-			System.out.println("LLege aqui");
 	        this.parametros = parametros;
 	        
 			this.archivoImprimir = JasperFillManager.fillReport(jasperReport, this.parametros, datos);

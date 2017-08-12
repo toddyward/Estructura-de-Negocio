@@ -1061,7 +1061,7 @@ public class RegistrarPedidoGUI {
 					insertarUltimoNumPed();
 					consultarIDCabPedido();
 					insertarDetPedido();
-					System.exit(0);
+					//System.exit(0);
 					
 				}
 			}

@@ -18,7 +18,7 @@ public class InicioGUI {
 	private JMenuItem registrarCliente2Itm;
 	private JMenuItem registrarLugarGeograficoItm;
 	private JMenuItem registrarPedidoItm;
-	private JMenuItem registrarReportes;
+	private JMenuItem registrarReportesItm;
 
 	public InicioGUI() {
 
@@ -64,10 +64,10 @@ public class InicioGUI {
 		menu2.setText("Reportes");
 		menubarra.add(menu2);
 		
-		registrarReportes = new JMenuItem("Iniciar un Reporte");
-		registrarReportes.addActionListener(new ButtonClickListener());
-		registrarReportes.setActionCommand("registrarReportes");
-		menu2.add(registrarReportes);
+		registrarReportesItm = new JMenuItem("Iniciar un Reporte");
+		registrarReportesItm.addActionListener(new ButtonClickListener());
+		registrarReportesItm.setActionCommand("registrarReportes");
+		menu2.add(registrarReportesItm);
 
 		mainFrame.setVisible(true);
 
